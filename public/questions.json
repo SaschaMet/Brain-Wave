@@ -1,0 +1,40 @@
+{
+    "questions": [
+        {
+            "id": 1,
+            "category": "History",
+            "questionText": "Who was the president of the United States during the American Civil War?",
+            "options": [
+                "George Washington",
+                "Thomas Jefferson",
+                "Abraham Lincoln",
+                "John F. Kennedy"
+            ],
+            "correctAnswer": [
+                "Abraham Lincoln"
+            ]
+        },
+        {
+            "id": 2,
+            "category": "Science",
+            "questionText": "Which of the following is NOT a primary color?",
+            "options": [
+                "Red",
+                "Blue",
+                "Yellow",
+                "Green"
+            ],
+            "correctAnswer": [
+                "Yellow"
+            ]
+        },
+        {
+            "id": 3,
+            "category": "Science",
+            "questionText": "What is the process of photosynthesis in plants?",
+            "correctAnswer": [
+                "During photosynthesis, plants take in carbon dioxide (CO2) and water (H2O) from the air and soil."
+            ]
+        }
+    ]
+}
