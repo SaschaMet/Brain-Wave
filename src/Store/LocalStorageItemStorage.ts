@@ -17,11 +17,6 @@ export class LocalStorageItemStorage<T> extends ItemStorage<T> {
         this.saveItemsToLocalStorage();
     }
 
-    storeSingleItem(newItem: T): void {
-        super.storeSingleItem(newItem);
-        this.saveItemsToLocalStorage();
-    }
-
     loadItemsFromLocalStorage(): void {
         const storedItems = localStorage.getItem(this.storageKey);
         if (storedItems) {

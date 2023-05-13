@@ -6,11 +6,7 @@ export class ItemStorage<T> {
     }
 
     storeMultipleItems(newItems: T[]): void {
-        this.items.push(...newItems);
-    }
-
-    storeSingleItem(newItem: T): void {
-        this.items.push(newItem);
+        this.items = newItems;
     }
 
     fetchAllItems(): T[] {

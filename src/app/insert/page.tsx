@@ -105,8 +105,7 @@ const CreateNewQuestion = () => {
         // add the new question to the questions array
         questions.push(newQuestion);
 
-        // save the questions array to local storage
-        localStorage.setItem('questions', JSON.stringify(questions));
+        questionStore.storeMultipleItems(questions);
 
         // reset the form
         setLoading(true);
@@ -118,6 +117,71 @@ const CreateNewQuestion = () => {
             setLoading(false);
         }, 350);
     };
+
+    const validateData = async () => {
+        try {
+            await questionStore.setup();
+            const questions = await questionStore.fetchAllItems() as QuestionType[]
+
+            const data = document.getElementById('manual-data') as HTMLTextAreaElement;
+
+            // if data is empty, alert the user and abort
+            if (!data.value) {
+                alert('Please enter valid data! Aborting...');
+                return null;
+            }
+
+            // if the first element is not an [, add [ as the first element and ] as the last element
+            if (data.value[0] !== '[') {
+                data.value = '[' + data.value + ']';
+            }
+
+            const parsedData = JSON.parse(data.value);
+
+            // if parsedData is not an array, alert the user and abort
+            if (!Array.isArray(parsedData)) {
+                alert('Please enter valid data! Aborting...');
+                return null;
+            }
+
+            // if parsedData is an array, check if all items in the array are of type Question
+            parsedData.forEach((item: QuestionType) => {
+                if (!item.questionText || !item.correctAnswer) {
+                    alert('Please enter valid json data that matches the Question type! Aborting...');
+                    return null;
+                }
+            });
+
+            const newQuestions = parsedData.map((item) => {
+                return {
+                    id: questions.length + 1,
+                    questionText: item.questionText,
+                    correctAnswer: item.correctAnswer,
+                    options: item.options || undefined,
+                    explanation: item.explanation || undefined,
+                }
+            })
+
+            return newQuestions as QuestionType[];
+        } catch (error) {
+            console.error(error);
+            alert('Error. Aborting...');
+            return null;
+        }
+    }
+
+    const addDataManually = async () => {
+        try {
+            const data = await validateData();
+            if (!data) return null;
+            await questionStore.storeMultipleItems(data);
+            const textArea = document.getElementById('manual-data') as HTMLTextAreaElement;
+            textArea.value = '';
+            alert('Data added successfully!');
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     if (loading) {
         return (
@@ -204,6 +268,18 @@ const CreateNewQuestion = () => {
                     Submit
                 </button>
             </form>
+
+            <div className='col-12 mt-5 row'>
+                <hr />
+                <div className='col-12 mb-3'>
+                    <textarea id="manual-data" className='form-control' rows={3} placeholder='Paste your questions here ...' />
+                </div>
+                <div className='col-12 col-sm-6'>
+                    <button type="button" className="btn btn-outline-secondary" onClick={addDataManually} >
+                        Add questions manually.
+                    </button>
+                </div>
+            </div>
 
         </div>
     );

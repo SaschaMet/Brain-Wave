@@ -26,7 +26,7 @@ const generateStatistics = (questions: QuestionType[], cards: CardData[]) => {
     const numberOfCorrectAnswers = cards.filter(card => card.grade >= 1).length
 
     // Number of incorrect answers
-    const numberOfIncorrectAnswers = cards.filter(card => card.grade < 1).length
+    const numberOfIncorrectAnswers = cards.filter(card => card.history.length !== 0 && card.grade < 1).length
 
     // Number of questions not yet answered
     const numberOfQuestionsNotYetAnswered = cards.filter(card => card.history.length === 0).length

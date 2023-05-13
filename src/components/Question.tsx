@@ -98,7 +98,14 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
                     <button type="button" className="btn btn-secondary text-center m-auto col-auto" onClick={showAnswer}>Show Answer</button>
                 )}
                 {showNextQuestionButton && question.options?.length && (
-                    <button type="button" className="btn btn-secondary text-center m-auto col-auto" onClick={nextQuestion}>Next Question</button>
+                    <>
+                        <button type="button" className="btn btn-secondary text-center m-auto col-auto" onClick={nextQuestion}>Next Question</button>
+                        {question.explanation && (
+                            <div className="col-12 mt-5">
+                                {question.explanation}
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
         </div>

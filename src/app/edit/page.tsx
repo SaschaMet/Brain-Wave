@@ -187,7 +187,7 @@ const QuestionEditor = () => {
                                     <br />
                                     {question.options && question.options.map((answer, answerIndex) => (
                                         <div className="option-wrapper form-check d-flex justify-content-between align-content-between flex-wrap py-1" key={`answer-${answer}-${answerIndex}`}>
-                                            <div>
+                                            <div className='col-10'>
                                                 <input className="form-check-input question-option mt-2" type="checkbox" name={`answer-${index}`} id={`answer-${index}-${answerIndex}`} defaultChecked={question.correctAnswer.includes(answer)} />
                                                 <input type='text' className="form-control question-text" defaultValue={answer} />
                                             </div>
