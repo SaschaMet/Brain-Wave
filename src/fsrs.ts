@@ -6,32 +6,7 @@
     Retrievability (R) refers to how easy it is to recall the information once it's been learned.
  */
 
-export interface CardData {
-    id: number;
-    due: string;
-    interval: number;
-    difficulty: number;
-    stability: number;
-    retrievability: number;
-    grade: number;
-    review: string;
-    reps: number;
-    lapses: number;
-    history: any[];
-}
-
-interface Options {
-    difficultyDecay: number;
-    stabilityDecay: number;
-    increaseFactor: number;
-    requestRetention: number;
-    totalCase: number;
-    totalDiff: number;
-    totalReview: number;
-    defaultDifficulty: number;
-    defaultStability: number;
-    stabilityDataArray: Array<{ interval: number; retrievability: number }>;
-}
+import { CardData, Options } from "./types"
 
 const MILLISECONDS_IN_DAY = 86400000;
 const DEFAULT_RETENTION = 0.9;

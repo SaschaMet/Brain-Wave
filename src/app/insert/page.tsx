@@ -1,10 +1,14 @@
 "use client"
 
-import React, { useEffect, useState } from 'react';
-
-import { Question } from "../page"
+import React, { useState } from 'react';
+import { QuestionType } from "@/types"
+import { Store } from "@/Store"
 
 const CreateNewQuestion = () => {
+    const questionStore = new Store('questions');
+
+    const [loading, setLoading] = useState<boolean>(false)
+
     const [question, setQuestion] = useState('');
     const [answers, setAnswers] = useState(['']);
     const [isMultipleChoice, setIsMultipleChoice] = useState(true);
@@ -40,7 +44,6 @@ const CreateNewQuestion = () => {
             return correctAnswer;
         } else {
             const input = document.getElementsByClassName("answer-open-ended-question")[0] as HTMLInputElement;
-            console.log(input)
             if (!input) return;
             return [input.value];
         }
@@ -62,25 +65,42 @@ const CreateNewQuestion = () => {
         setAnswers(updatedAnswers);
     };
 
-    const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // get the questions from local storage
-        const questions = JSON.parse(localStorage.getItem('questions') || '[]') as Question[];
+        await questionStore.setup();
+        const questions = await questionStore.fetchAllItems() as QuestionType[]
 
         const correctAnswer = getCorrectAnswer();
 
         if (!correctAnswer || correctAnswer.length === 0) {
-            alert('Please select a correct answer!');
+            alert('Please select at least one correct answer!');
             return;
         }
 
+        const newAnswers = answers.filter((answer) => answer !== '');
+
         // create a new question object
-        const newQuestion: Question = {
+        const newQuestion: QuestionType = {
             id: questions.length + 1,
             questionText: question,
             correctAnswer,
-            options: answers.length > 0 ? answers : undefined,
+            options: isMultipleChoice ? newAnswers : undefined,
         }
+
+        // alert if the question text is empty
+        if (!newQuestion.questionText || newQuestion.questionText === '') {
+            alert('Please enter a question!');
+            return;
+        }
+
+        // alert if the question type is multiple choice and there are less than 2 options
+        if (isMultipleChoice && newQuestion.options?.length && newQuestion.options.length < 2) {
+            alert('Please enter at least 2 options!');
+            return;
+        }
+
+        // filter the new question object to remove any empty strings
+        newQuestion.options = newQuestion.options?.filter((option: string) => option !== '');
 
         // add the new question to the questions array
         questions.push(newQuestion);
@@ -88,9 +108,26 @@ const CreateNewQuestion = () => {
         // save the questions array to local storage
         localStorage.setItem('questions', JSON.stringify(questions));
 
-        // reload the page
-        window.location.reload();
+        // reset the form
+        setLoading(true);
+        setQuestion('');
+        setAnswers(['']);
+        setIsMultipleChoice(true);
+
+        setTimeout(() => {
+            setLoading(false);
+        }, 350);
     };
+
+    if (loading) {
+        return (
+            <div className="d-flex justify-content-center">
+                <div className="spinner-border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className='container'>
@@ -167,6 +204,7 @@ const CreateNewQuestion = () => {
                     Submit
                 </button>
             </form>
+
         </div>
     );
 

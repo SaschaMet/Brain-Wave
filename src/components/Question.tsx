@@ -1,23 +1,35 @@
-import { Question } from "../app/page"
+import { QuestionType } from "@/types"
+import { useState } from "react"
 
 const stripWhitespace = (str: string) => str.replace(/\s/g, "")
 
-export default function Question({ question, changeQuestion, giveFeedback }: { question: Question, changeQuestion: Function, giveFeedback: Function }) {
+export default function Question({ question, giveFeedback, changeQuestion }: { question: QuestionType, giveFeedback: Function, changeQuestion: Function }) {
 
-    const toggleButtons = () => {
-        const answerQuestionButton = document.getElementById("answer-question-button")
-        if (answerQuestionButton) {
-            answerQuestionButton.classList.toggle("d-none")
-        }
-        const nextQuestionButton = document.getElementById("next-question-button")
-        if (nextQuestionButton) {
-            nextQuestionButton.classList.toggle("d-none")
-        }
+    const [showNextQuestionButton, setShowNextQuestionButton] = useState(false)
+    const [showCorrectAnswer, setShowCorrectAnswer] = useState(false)
+
+    const answerMultipleChoice = () => {
+        let correctlyAnswered = true
+        const answers = Array.from(document.querySelectorAll<HTMLLIElement>("li.list-group-item"))
+            .filter((li) => !li.classList.contains("disabled"))
+
+        // if an answer contains the list-group-item-danger or list-group-item-warning class, it is incorrect
+        answers.forEach((li) => {
+            if (li.classList.contains("list-group-item-danger") || li.classList.contains("list-group-item-warning")) {
+                correctlyAnswered = false
+            }
+        })
+
+        giveFeedback(question.id, correctlyAnswered)
     }
 
     const nextQuestion = () => {
+        if (question.options && question.options.length > 1) {
+            answerMultipleChoice()
+        }
+        setShowNextQuestionButton(false)
+        setShowCorrectAnswer(false)
         changeQuestion()
-        toggleButtons()
     }
 
     const answerOpenEndedQuestion = (isCorrect: boolean) => {
@@ -25,46 +37,33 @@ export default function Question({ question, changeQuestion, giveFeedback }: { q
         nextQuestion()
     }
 
-    const answerQuestion = () => {
-        const isMultipleChoice = question.options && question.options.length > 1
-        let correctlyAnswered = true
-        if (isMultipleChoice) {
-            Array.from(document.querySelectorAll<HTMLLIElement>("#answer-options > li")).forEach((li) => {
-                const input = li.querySelector<HTMLInputElement>("input")
-                if (!input) return
+    const showMultipleChoiceAnswers = () => {
+        Array.from(document.querySelectorAll<HTMLLIElement>("#answer-options > li")).forEach((li) => {
+            const input = li.querySelector<HTMLInputElement>("input")
+            if (!input) return
 
-                const isCorrect = question.correctAnswer.includes(input.value as string)
-                if (input.checked) {
-                    if (isCorrect) {
-                        li.classList.add("list-group-item-success")
-                    } else {
-                        correctlyAnswered = false
-                        li.classList.add("list-group-item-danger")
-                    }
-                } else if (isCorrect) {
-                    li.classList.add("list-group-item-warning")
+            const isCorrect = question.correctAnswer.includes(input.value as string)
+            if (input.checked) {
+                if (isCorrect) {
+                    li.classList.add("list-group-item-success")
                 } else {
-                    li.classList.add("disabled")
+                    li.classList.add("list-group-item-danger")
                 }
-            })
-
-            if (correctlyAnswered) {
-                giveFeedback(question.id, true)
+            } else if (isCorrect) {
+                li.classList.add("list-group-item-warning")
             } else {
-                giveFeedback(question.id, false)
+                li.classList.add("disabled")
             }
+        })
+        setShowNextQuestionButton(true)
+    }
 
-            toggleButtons()
+    const showAnswer = () => {
+        if (question.options && question.options.length > 1) {
+            showMultipleChoiceAnswers()
         } else {
-            // show the correct answer
-            const correctAnswer = document.getElementById("show-correct-answer")
-            if (correctAnswer) {
-                correctAnswer.classList.remove("d-none")
-            }
-            const answerQuestionButton = document.getElementById("answer-question-button")
-            if (answerQuestionButton) {
-                answerQuestionButton.classList.toggle("d-none")
-            }
+            setShowCorrectAnswer(true)
+            setShowNextQuestionButton(true)
         }
     }
 
@@ -85,8 +84,8 @@ export default function Question({ question, changeQuestion, giveFeedback }: { q
                     ))}
                 </ul>
             )}
-            {!question.options && (
-                <div className="px-3 d-none" id="show-correct-answer">
+            {!question.options && showCorrectAnswer && (
+                <div className="px-3">
                     <p>{question.correctAnswer[0]}</p>
                     <div className="row">
                         <button type="button" onClick={() => answerOpenEndedQuestion(false)} className="btn btn-danger m-auto col-auto">Incorrect</button>
@@ -95,8 +94,12 @@ export default function Question({ question, changeQuestion, giveFeedback }: { q
                 </div>
             )}
             <div className="card-body row">
-                <button type="button" id="answer-question-button" className="btn btn-secondary text-center m-auto col-auto" onClick={answerQuestion}>Show Answer</button>
-                <button type="button" id="next-question-button" className="btn btn-secondary text-center m-auto col-auto d-none" onClick={nextQuestion}>Next Question</button>
+                {!showNextQuestionButton && (
+                    <button type="button" className="btn btn-secondary text-center m-auto col-auto" onClick={showAnswer}>Show Answer</button>
+                )}
+                {showNextQuestionButton && question.options?.length && (
+                    <button type="button" className="btn btn-secondary text-center m-auto col-auto" onClick={nextQuestion}>Next Question</button>
+                )}
             </div>
         </div>
     )
