@@ -1,7 +1,13 @@
 import { QuestionType } from "@/types"
 import { useState } from "react"
+import Image from 'next/image'
 
 const stripWhitespace = (str: string) => str.replace(/\s/g, "")
+
+function getImageDimensiion(screenSize: number) {
+    return Math.min(350, screenSize * 0.9);
+}
+
 
 export default function Question({ question, giveFeedback, changeQuestion }: { question: QuestionType, giveFeedback: Function, changeQuestion: Function }) {
 
@@ -72,6 +78,16 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
             {/* <img src="https://placehold.co/400" className="card-img-top text-center m-auto mb-5" alt="..." style={{ maxWidth: 400 }} /> */}
             <div className="card-body row">
                 <h5 className="card-title col-12">{question.questionText}</h5>
+                {question.imageUrlQuestion && (
+                    <div className="col-12 mt-5">
+                        <Image
+                            src={question.imageUrlQuestion}
+                            width={getImageDimensiion(window.screen.width)}
+                            height={getImageDimensiion(window.screen.height)}
+                            alt="Explanation Image"
+                        />
+                    </div>
+                )}
             </div>
             {question.options && (
                 <ul className="list-group list-group-flush border-0" id="answer-options">
@@ -86,7 +102,7 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
             {!question.options && showCorrectAnswer && (
                 <div className="px-3">
                     <p>{question.correctAnswer[0]}</p>
-                    <div className="row">
+                    <div className="row pt-4">
                         <button type="button" onClick={() => answerOpenEndedQuestion(false)} className="btn btn-danger m-auto col-auto">Incorrect</button>
                         <button type="button" onClick={() => answerOpenEndedQuestion(true)} className="btn btn-success m-auto col-auto">Correct</button>
                     </div>
@@ -102,6 +118,16 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
                 {showNextQuestionButton && question.explanation && (
                     <div className="col-12 mt-5">
                         {question.explanation}
+                    </div>
+                )}
+                {showNextQuestionButton && question.imageUrlExplanation && (
+                    <div className="col-12 mt-5">
+                        <Image
+                            src={question.imageUrlExplanation}
+                            width={getImageDimensiion(window.screen.width)}
+                            height={getImageDimensiion(window.screen.height)}
+                            alt="Explanation Image"
+                        />
                     </div>
                 )}
             </div>

@@ -1,6 +1,6 @@
 "use client"
 import React, { use, useEffect, useState } from "react"
-import { Store } from "@/Store"
+import { Store } from "@/store"
 import { CardData, QuestionType } from "@/types"
 
 type StatisticsType = {

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { QuestionType } from "@/types"
-import { Store } from "@/Store"
+import { Store } from "@/store"
 
 const QuestionEditor = () => {
     const questionStore = new Store('questions');
@@ -69,8 +69,21 @@ const QuestionEditor = () => {
 
             const question = questions[questionIndex];
 
-            const explanation = document.getElementById(`question-${questionIndex}-explanation`) as HTMLTextAreaElement;
+            let explanation = document.getElementById(`question-${questionIndex}-explanation`) as HTMLTextAreaElement;
+            if (explanation && explanation.value !== ''){
+                explanation.value = explanation.value.trim();
+            }
 
+            let imageUrlQuestion = document.getElementById("image-url-question") as HTMLInputElement;
+            if (imageUrlQuestion && imageUrlQuestion.value !== ''){
+                imageUrlQuestion.value = imageUrlQuestion.value.trim();
+            }
+    
+            let imageUrlExplanation = document.getElementById("image-url-explanation") as HTMLInputElement;
+            if (imageUrlExplanation && imageUrlExplanation.value !== ''){
+                imageUrlExplanation.value = imageUrlExplanation.value.trim();
+            }
+            
             // check if the question has options
             if (question.options) {
                 // get the new question text
@@ -103,6 +116,8 @@ const QuestionEditor = () => {
                         correctAnswer: updatedCorrectAnswer,
                         questionText: questionTextElement.value,
                         explanation: explanation.value === '' ? "" : explanation.value,
+                        imageUrlQuestion: imageUrlQuestion.value === '' ? "" : imageUrlQuestion.value,
+                        imageUrlExplanation: imageUrlExplanation.value === '' ? "" : imageUrlExplanation.value,
                     } as QuestionType;
 
 
@@ -127,6 +142,8 @@ const QuestionEditor = () => {
                     correctAnswer: [answerElement.value],
                     questionText: questionTextElement.value,
                     explanation: explanation.value === '' ? "" : explanation.value,
+                    imageUrlQuestion: imageUrlQuestion.value === '' ? "" : imageUrlQuestion.value,
+                    imageUrlExplanation: imageUrlExplanation.value === '' ? "" : imageUrlExplanation.value,
                 } as QuestionType;
 
                 // update the questions array
@@ -187,8 +204,14 @@ const QuestionEditor = () => {
                             <div className="accordion-body row">
 
                                 <div className="mb-3 col-12">
+                                    <label className="form-check-label text-muted">
+                                        Question
+                                    </label>
                                     <input type="text" className="form-control" id={`question-${index}-text`} placeholder="Question Text" defaultValue={question.questionText} />
                                     <br />
+                                    <label className="form-check-label text-muted">
+                                        Answer(s)
+                                    </label>
                                     {question.options && question.options.map((answer, answerIndex) => (
                                         <div className="option-wrapper form-check d-flex justify-content-between align-content-between flex-wrap py-1" key={`answer-${answer}-${answerIndex}`}>
                                             <div className='col-10'>
@@ -210,7 +233,22 @@ const QuestionEditor = () => {
                                     )}
                                     <br />
                                     <div>
+                                        <label className="form-check-label text-muted">
+                                            Explanation - Optional
+                                        </label>                                     
                                         <textarea className="form-control explanation" id={`question-${index}-explanation`} rows={3} placeholder="Further explain your answer - Optional." defaultValue={question.explanation} />
+                                    </div>
+                                    <div className='my-3'>
+                                        <label className="form-check-label text-muted" htmlFor="image-url-question">
+                                            Image URL for Questions- Optional
+                                        </label>
+                                        <input className="form-control image-url" key="image-url-question" id="image-url-question" type="text" placeholder="Image will be shown together with the question" defaultValue={question.imageUrlQuestion}/>
+                                    </div>
+                                    <div className='my-3'>
+                                        <label className="form-check-label text-muted" htmlFor="image-url-explanation">
+                                            Image URL for Explanation- Optional
+                                        </label>
+                                        <input className="form-control image-url" key="image-url-explanation" id="image-url-explanation" type="text" placeholder="Image will be shown together with the explanation of a question" defaultValue={question.imageUrlExplanation}/>
                                     </div>
                                 </div>
 

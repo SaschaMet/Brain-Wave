@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 
-import { Store, setupCards, sortCardsForLearning } from "@/Store"
+import { Store, setupCards, sortCardsForLearning } from "@/store"
 import Question from "../components/Question"
 import fsrs from "../fsrs"
 

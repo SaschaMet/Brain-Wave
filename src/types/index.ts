@@ -4,6 +4,8 @@ export interface QuestionType {
     correctAnswer: string[]
     options?: string[]
     explanation?: string
+    imageUrlQuestion?: string
+    imageUrlExplanation?: string
 }
 
 export interface CardData {

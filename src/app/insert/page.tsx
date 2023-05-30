@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { QuestionType } from "@/types"
-import { Store } from "@/Store"
+import { Store } from "@/store"
 
 const CreateNewQuestion = () => {
     const questionStore = new Store('questions');
@@ -80,6 +80,19 @@ const CreateNewQuestion = () => {
         const newAnswers = answers.filter((answer) => answer !== '');
 
         const explanation = document.getElementById('explanation') as HTMLTextAreaElement;
+        if (explanation && explanation.value !== ''){
+            explanation.value = explanation.value.trim();
+        }
+
+        let imageUrlQuestion = document.getElementById("image-url-question") as HTMLInputElement;
+        if (imageUrlQuestion && imageUrlQuestion.value !== ''){
+            imageUrlQuestion.value = imageUrlQuestion.value.trim();
+        }
+
+        let imageUrlExplanation = document.getElementById("image-url-explanation") as HTMLInputElement;
+        if (imageUrlExplanation && imageUrlExplanation.value !== ''){
+            imageUrlExplanation.value = imageUrlExplanation.value.trim();
+        }
 
         // create a new question object
         const newQuestion: QuestionType = {
@@ -88,6 +101,8 @@ const CreateNewQuestion = () => {
             correctAnswer,
             options: isMultipleChoice ? newAnswers : undefined,
             explanation: explanation.value === '' ? "" : explanation.value,
+            imageUrlQuestion: imageUrlQuestion?.value === '' ? undefined : imageUrlQuestion?.value,
+            imageUrlExplanation: imageUrlExplanation?.value === '' ? undefined : imageUrlExplanation?.value,
         }
 
         // alert if the question text is empty
@@ -164,6 +179,8 @@ const CreateNewQuestion = () => {
                     correctAnswer: item.correctAnswer,
                     options: item.options || undefined,
                     explanation: item.explanation || undefined,
+                    imageUrlQuestion: item.imageUrlQuestion || undefined,
+                    imageUrlExplanation: item.imageUrlExplanation || undefined,
                 }
             })
 
@@ -269,10 +286,22 @@ const CreateNewQuestion = () => {
                     </div>
                 )}
                 <div className='mb-3 mt-3'>
-                    <textarea className="form-control explanation" id="explanation" rows={3} placeholder="Further explain your answer - Optional." />
+                    <label className="form-check-label text-muted" htmlFor="explanation">
+                        Further explain your answer - Optional
+                    </label>
+                    <textarea className="form-control explanation" id="explanation" rows={3} placeholder="..." />
                 </div>
-                <div className='mb-3 pt-5 mt-4'>
-                    <textarea className="form-control explanation" id="image" rows={3} placeholder="Add image url here - remember to add a url to your google drive" />
+                <div className='mb-3'>
+                    <label className="form-check-label text-muted" htmlFor="image-url">
+                        Image URL Question - Optional
+                    </label>
+                    <input className="form-control image-url" key="image-url-question" id="image-url-question" type="text" placeholder="Image will be shown together with the question" />
+                </div>
+                <div className='mb-3'>
+                    <label className="form-check-label text-muted" htmlFor="image-url">
+                        Image URL Explanation - Optional
+                    </label>
+                    <input className="form-control image-url" key="image-url-explanation" id="image-url-explanation" type="text" placeholder="Image will be shown together with the explanation of a question" />
                 </div>
                 <button type="submit" className="btn btn-secondary mt-5">
                     Submit
