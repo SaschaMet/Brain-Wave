@@ -6,6 +6,7 @@ export interface QuestionType {
     explanation?: string
     imageUrlQuestion?: string
     imageUrlExplanation?: string
+    categories: string[]
 }
 
 export interface CardData {
@@ -33,4 +34,9 @@ export interface Options {
     defaultDifficulty: number;
     defaultStability: number;
     stabilityDataArray: Array<{ interval: number; retrievability: number }>;
+}
+
+export enum FilterEntity {
+    category = 'category',
+    difficulty = 'difficulty',
 }

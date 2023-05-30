@@ -1,12 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 
 import { Store, setupCards, sortCardsForLearning } from "@/store"
 import Question from "../components/Question"
 import fsrs from "../fsrs"
 
-import { QuestionType, CardData } from "@/types"
+import { QuestionType, CardData, FilterEntity } from "@/types"
 
 export default function Home() {
 
@@ -98,10 +98,34 @@ export default function Home() {
         setCurrentCardIndex(0)
     }
 
+    const filterCards = async (e: ChangeEvent<HTMLSelectElement>, filterEntity: FilterEntity) => {
+
+        const filter = e.target.value
+
+        console.info("Filter cards")
+        const filteredQuestions = questions!.filter(question => {
+            if (filterEntity === "category") {
+                return question.categories?.includes(filter)
+            } 
+        }).map(n => n)
+
+        if (filteredQuestions.length === 0) {
+            alert("No questions found for filter")
+            return
+        }
+
+        const newCards = await setupCards(filteredQuestions!)
+        await setCards(newCards)
+
+        setCurrentCardIndex(0)
+    }
+
     useEffect(() => {
         setup()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    const categories = questions?.map(question => question.categories).flat().filter((v, i, a) => a.indexOf(v) === i).filter(n => n)
 
     return (
         <div className="container-xl">
@@ -124,11 +148,22 @@ export default function Home() {
                             </div>
                         )}
                         {Boolean(questions?.length && cards?.length && currentCardIndex !== null) && (
-                            <Question
-                                question={getNextCard()}
-                                giveFeedback={updateCards}
-                                changeQuestion={changeQuestion}
-                            />
+                            <>                                
+                                <Question
+                                    question={getNextCard()}
+                                    giveFeedback={updateCards}
+                                    changeQuestion={changeQuestion}
+                                />
+                                <div className="col-12 col-sm-4 mt-5" >
+                                    Filter Category: 
+                                    <select className="form-select" aria-label="Default select example" onChange={(e) => filterCards(e, FilterEntity.category)}>
+                                        <option>No filter</option>
+                                        {categories?.map(category => (
+                                            <option key={category} value={category}>{category}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </>
                         )}
                     </main>
                 </div>

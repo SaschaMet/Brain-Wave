@@ -12,6 +12,7 @@ const CreateNewQuestion = () => {
     const [question, setQuestion] = useState('');
     const [answers, setAnswers] = useState(['']);
     const [isMultipleChoice, setIsMultipleChoice] = useState(true);
+    const [categories, setCategories] = useState<string[]>([]);
 
     const handleQuestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setQuestion(e.target.value);
@@ -65,6 +66,18 @@ const CreateNewQuestion = () => {
         setAnswers(updatedAnswers);
     };
 
+    const removeCategory = (index: number) => {
+        const updatedCategories = [...categories];
+        updatedCategories.splice(index, 1);
+        setCategories(updatedCategories);
+    };
+
+    const addCategory = () => {
+        const updatedCategories = [...categories];
+        updatedCategories.push('');
+        setCategories(updatedCategories);
+    };
+
     const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
         await questionStore.setup();
@@ -103,6 +116,7 @@ const CreateNewQuestion = () => {
             explanation: explanation.value === '' ? "" : explanation.value,
             imageUrlQuestion: imageUrlQuestion?.value === '' ? undefined : imageUrlQuestion?.value,
             imageUrlExplanation: imageUrlExplanation?.value === '' ? undefined : imageUrlExplanation?.value,
+            categories: categories.filter((category) => category !== ''),
         }
 
         // alert if the question text is empty
@@ -302,6 +316,24 @@ const CreateNewQuestion = () => {
                         Image URL Explanation - Optional
                     </label>
                     <input className="form-control image-url" key="image-url-explanation" id="image-url-explanation" type="text" placeholder="Image will be shown together with the explanation of a question" />
+                </div>
+                <div className='mb-3'>
+                    <p className='text-muted'>Categories</p>
+                    {categories && categories.map((category, categoryIndex) => (
+                        <div className="option-wrapper form-check d-flex justify-content-between align-content-between flex-wrap py-1" key={`${category}-${categoryIndex}`} >
+                            <div className='col-10'>                                                
+                                <input type='text' className="form-control question-category" defaultValue={category} />
+                            </div>
+                            <div>
+                                <button type="button" className="btn btn-danger btn-sm ms-2" onClick={() => removeCategory(categoryIndex)}>
+                                    Delete Category
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                    <button type="button" className="btn btn-secondary btn-sm" onClick={addCategory}>
+                        Add Category
+                    </button>
                 </div>
                 <button type="submit" className="btn btn-secondary mt-5">
                     Submit

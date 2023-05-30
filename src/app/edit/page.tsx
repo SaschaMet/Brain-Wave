@@ -55,10 +55,33 @@ const QuestionEditor = () => {
         }
     };
 
+    const removeCategory = (category: string, questionIndex: number) => {
+        try {
+            const question = questions[questionIndex];
+            const newCategories = question.categories?.filter((cat) => cat !== category);
+
+            question.categories = newCategories;
+            const updatedQuestions = [...questions];
+            updatedQuestions[questionIndex] = question;
+            setQuestions(updatedQuestions);
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const addOption = (questionIndex: number) => {
         const question = questions[questionIndex];
         const options = question.options ? question.options : [];
         question.options = [...options, 'new option'];
+        questions[questionIndex] = question;
+        setQuestions([...questions]);
+    };
+
+    const addCategory = (questionIndex: number) => {
+        const question = questions[questionIndex];
+        const categories = question.categories ? question.categories : [];
+        question.categories = [...categories, ''];
         questions[questionIndex] = question;
         setQuestions([...questions]);
     };
@@ -82,6 +105,11 @@ const QuestionEditor = () => {
             let imageUrlExplanation = document.getElementById("image-url-explanation") as HTMLInputElement;
             if (imageUrlExplanation && imageUrlExplanation.value !== ''){
                 imageUrlExplanation.value = imageUrlExplanation.value.trim();
+            }
+
+            const categories = document.querySelectorAll('input.question-category') as NodeListOf<HTMLInputElement>;
+            if (categories?.length) {
+                question.categories = Array.from(categories).map((category) => category.value.trim());
             }
             
             // check if the question has options
@@ -249,6 +277,24 @@ const QuestionEditor = () => {
                                             Image URL for Explanation- Optional
                                         </label>
                                         <input className="form-control image-url" key="image-url-explanation" id="image-url-explanation" type="text" placeholder="Image will be shown together with the explanation of a question" defaultValue={question.imageUrlExplanation}/>
+                                    </div>
+                                    <div className='my-3'>
+                                        <p className='text-muted'>Categories</p>
+                                        {question.categories && question.categories.map((category, categoryIndex) => (
+                                            <div className="option-wrapper form-check d-flex justify-content-between align-content-between flex-wrap py-1" key={`${category}-${categoryIndex}`} >
+                                                <div className='col-10'>                                                
+                                                    <input type='text' className="form-control question-category" defaultValue={category} />
+                                                </div>
+                                                <div>
+                                                    <button type="button" className="btn btn-danger btn-sm ms-2" onClick={() => removeCategory(category, index)}>
+                                                        Delete Category
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        <button type="button" className="btn btn-secondary btn-sm" onClick={() => addCategory(index)}>
+                                            Add Category
+                                        </button>
                                     </div>
                                 </div>
 

@@ -74,8 +74,7 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
     }
 
     return (
-        <div className="card p-3 w-100">
-            {/* <img src="https://placehold.co/400" className="card-img-top text-center m-auto mb-5" alt="..." style={{ maxWidth: 400 }} /> */}
+        <div className="card p-3 w-100">            
             <div className="card-body row">
                 <h5 className="card-title col-12">{question.questionText}</h5>
                 {question.imageUrlQuestion && (
@@ -128,6 +127,11 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
                             height={getImageDimensiion(window.screen.height)}
                             alt="Explanation Image"
                         />
+                    </div>
+                )}
+                {showNextQuestionButton && question.categories?.length && (
+                    <div className="col-12 mt-5">
+                        <p className="text-muted" >Categories: {question.categories.join(", ")}</p>
                     </div>
                 )}
             </div>
