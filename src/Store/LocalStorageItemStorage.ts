@@ -12,6 +12,11 @@ export class LocalStorageItemStorage<T> extends ItemStorage<T> {
         this.loadItemsFromLocalStorage();
     }
 
+    replaceItems(newItems: T[]): void {
+        super.replaceItems(newItems);
+        this.saveItemsToLocalStorage();
+    }
+
     storeMultipleItems(newItems: T[]): void {
         super.storeMultipleItems(newItems);
         this.saveItemsToLocalStorage();

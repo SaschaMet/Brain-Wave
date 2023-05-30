@@ -33,7 +33,7 @@ const QuestionEditor = () => {
         const updatedQuestions = questions.filter((question, index) => index !== questionIndex);
         closeAccordion(questionIndex);
         setQuestions(updatedQuestions);
-        await questionStore.storeMultipleItems(updatedQuestions)
+        await questionStore.replaceItems(updatedQuestions)
     };
 
     const removeOption = (answerIndex: number, questionIndex: number) => {
@@ -69,6 +69,8 @@ const QuestionEditor = () => {
 
             const question = questions[questionIndex];
 
+            const explanation = document.getElementById(`question-${questionIndex}-explanation`) as HTMLTextAreaElement;
+
             // check if the question has options
             if (question.options) {
                 // get the new question text
@@ -97,9 +99,10 @@ const QuestionEditor = () => {
                     // update the question
                     const updatedQuestion = {
                         ...question,
-                        questionText: questionTextElement.value,
                         options: updatedOptions,
                         correctAnswer: updatedCorrectAnswer,
+                        questionText: questionTextElement.value,
+                        explanation: explanation.value === '' ? "" : explanation.value,
                     } as QuestionType;
 
 
@@ -110,7 +113,7 @@ const QuestionEditor = () => {
                     const updatedQuestions = [...questions];
                     updatedQuestions[questionIndex] = updatedQuestion;
                     setQuestions(updatedQuestions);
-                    await questionStore.storeMultipleItems(updatedQuestions)
+                    await questionStore.replaceItems(updatedQuestions)
                 }
             } else {
                 // get the new question text
@@ -121,15 +124,16 @@ const QuestionEditor = () => {
                 // update the question
                 const updatedQuestion = {
                     ...question,
-                    questionText: questionTextElement.value,
                     correctAnswer: [answerElement.value],
+                    questionText: questionTextElement.value,
+                    explanation: explanation.value === '' ? "" : explanation.value,
                 } as QuestionType;
 
                 // update the questions array
                 const updatedQuestions = [...questions];
                 updatedQuestions[questionIndex] = updatedQuestion;
                 setQuestions(updatedQuestions);
-                await questionStore.storeMultipleItems(updatedQuestions)
+                await questionStore.replaceItems(updatedQuestions)
 
             }
 
@@ -200,10 +204,14 @@ const QuestionEditor = () => {
                                     )
                                     )}
                                     {!question.options && (
-                                        <div className="">
+                                        <div>
                                             <input className="form-control" type="text" name={`answer-${index}`} id={`question-${index}-answer`} defaultValue={question.correctAnswer[0]} />
                                         </div>
                                     )}
+                                    <br />
+                                    <div>
+                                        <textarea className="form-control explanation" id={`question-${index}-explanation`} rows={3} placeholder="Further explain your answer - Optional." defaultValue={question.explanation} />
+                                    </div>
                                 </div>
 
                                 <div className='mt-4 col'>

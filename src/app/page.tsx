@@ -33,7 +33,7 @@ export default function Home() {
 
             newCards = sortCardsForLearning(newCards)
 
-            cardStore.storeMultipleItems(newCards)
+            cardStore.replaceItems(newCards)
         }
     }
 
@@ -46,7 +46,7 @@ export default function Home() {
             console.info("resetting index")
             let newCards = [...cards!]
             newCards = sortCardsForLearning(newCards)
-            cardStore.storeMultipleItems(newCards)
+            cardStore.replaceItems(newCards)
             setCards(newCards)
             nextIndex = 0
         }
@@ -92,7 +92,7 @@ export default function Home() {
             console.info("Setting up cards")
             const newCards = await setupCards(questions)
             await setCards(newCards)
-            await cardStore.storeMultipleItems(newCards)
+            await cardStore.replaceItems(newCards)
         }
 
         setCurrentCardIndex(0)

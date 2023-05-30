@@ -5,8 +5,12 @@ export class ItemStorage<T> {
         this.items = [];
     }
 
-    storeMultipleItems(newItems: T[]): void {
+    replaceItems(newItems: T[]): void {
         this.items = newItems;
+    }
+
+    storeMultipleItems(newItems: T[]): void {
+        this.items = [...this.items, ...newItems];
     }
 
     fetchAllItems(): T[] {

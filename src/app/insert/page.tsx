@@ -79,12 +79,15 @@ const CreateNewQuestion = () => {
 
         const newAnswers = answers.filter((answer) => answer !== '');
 
+        const explanation = document.getElementById('explanation') as HTMLTextAreaElement;
+
         // create a new question object
         const newQuestion: QuestionType = {
             id: questions.length + 1,
             questionText: question,
             correctAnswer,
             options: isMultipleChoice ? newAnswers : undefined,
+            explanation: explanation.value === '' ? "" : explanation.value,
         }
 
         // alert if the question text is empty
@@ -105,7 +108,7 @@ const CreateNewQuestion = () => {
         // add the new question to the questions array
         questions.push(newQuestion);
 
-        questionStore.storeMultipleItems(questions);
+        questionStore.replaceItems(questions);
 
         // reset the form
         setLoading(true);
@@ -152,9 +155,11 @@ const CreateNewQuestion = () => {
                 }
             });
 
+            let counter = questions.length;
+
             const newQuestions = parsedData.map((item) => {
                 return {
-                    id: questions.length + 1,
+                    id: counter++,
                     questionText: item.questionText,
                     correctAnswer: item.correctAnswer,
                     options: item.options || undefined,
@@ -177,7 +182,6 @@ const CreateNewQuestion = () => {
             await questionStore.storeMultipleItems(data);
             const textArea = document.getElementById('manual-data') as HTMLTextAreaElement;
             textArea.value = '';
-            alert('Data added successfully!');
         } catch (error) {
             console.error(error);
         }
@@ -264,22 +268,30 @@ const CreateNewQuestion = () => {
                         <input className="form-control answer-open-ended-question" key="answer-open-ended-question" type="text" placeholder="The answer to your question ..." />
                     </div>
                 )}
+                <div className='mb-3 mt-3'>
+                    <textarea className="form-control explanation" id="explanation" rows={3} placeholder="Further explain your answer - Optional." />
+                </div>
+                <div className='mb-3 pt-5 mt-4'>
+                    <textarea className="form-control explanation" id="image" rows={3} placeholder="Add image url here - remember to add a url to your google drive" />
+                </div>
                 <button type="submit" className="btn btn-secondary mt-5">
                     Submit
                 </button>
             </form>
 
-            <div className='col-12 mt-5 row'>
-                <hr />
-                <div className='col-12 mb-3'>
-                    <textarea id="manual-data" className='form-control' rows={3} placeholder='Paste your questions here ...' />
+            {process.env.NODE_ENV === 'development' && (
+                <div className='col-12 mt-5 row'>
+                    <hr />
+                    <div className='col-12 mb-3'>
+                        <textarea id="manual-data" className='form-control' rows={3} placeholder='Paste your questions here ...' />
+                    </div>
+                    <div className='col-12 col-sm-6'>
+                        <button type="button" className="btn btn-outline-secondary" onClick={addDataManually} >
+                            Add questions manually.
+                        </button>
+                    </div>
                 </div>
-                <div className='col-12 col-sm-6'>
-                    <button type="button" className="btn btn-outline-secondary" onClick={addDataManually} >
-                        Add questions manually.
-                    </button>
-                </div>
-            </div>
+            )}
 
         </div>
     );

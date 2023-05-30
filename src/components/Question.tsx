@@ -72,7 +72,6 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
             {/* <img src="https://placehold.co/400" className="card-img-top text-center m-auto mb-5" alt="..." style={{ maxWidth: 400 }} /> */}
             <div className="card-body row">
                 <h5 className="card-title col-12">{question.questionText}</h5>
-                {question.explanation && <p className="card-text">{question.explanation}</p>}
             </div>
             {question.options && (
                 <ul className="list-group list-group-flush border-0" id="answer-options">
@@ -98,14 +97,12 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
                     <button type="button" className="btn btn-secondary text-center m-auto col-auto" onClick={showAnswer}>Show Answer</button>
                 )}
                 {showNextQuestionButton && question.options?.length && (
-                    <>
-                        <button type="button" className="btn btn-secondary text-center m-auto col-auto" onClick={nextQuestion}>Next Question</button>
-                        {question.explanation && (
-                            <div className="col-12 mt-5">
-                                {question.explanation}
-                            </div>
-                        )}
-                    </>
+                    <button type="button" className="btn btn-secondary text-center m-auto col-auto" onClick={nextQuestion}>Next Question</button>
+                )}
+                {showNextQuestionButton && question.explanation && (
+                    <div className="col-12 mt-5">
+                        {question.explanation}
+                    </div>
                 )}
             </div>
         </div>
