@@ -16,7 +16,11 @@ export default function Home() {
     const [questions, setQuestions] = useState<QuestionType[] | null>(null)
     const [cards, setCards] = useState<CardData[] | null>(null)
 
+    const [filteredCards, setFilteredCards] = useState<CardData[] | null>(null)
     const [currentCardIndex, setCurrentCardIndex] = useState<number | null>(null)
+
+    const [filter, setFilter] = useState<string | null>(null)
+    const [filterEntity, setFilterEntity] = useState<FilterEntity | null>(null)
 
     const updateCards = (questionId: number, correctlyAnswered: boolean) => {
         if (cards) {
@@ -57,7 +61,7 @@ export default function Home() {
     }
 
     const getNextCard = (): QuestionType => {
-        const nextCard = cards![currentCardIndex!]
+        const nextCard = filteredCards![currentCardIndex!]
         // get the question with the id of the card
         const question = questions!.find(question => question.id === nextCard.id)
 
@@ -95,29 +99,58 @@ export default function Home() {
             await cardStore.replaceItems(newCards)
         }
 
+        setFilteredCards(cards)
         setCurrentCardIndex(0)
     }
 
     const filterCards = async (e: ChangeEvent<HTMLSelectElement>, filterEntity: FilterEntity) => {
-
         const filter = e.target.value
+        if (filterEntity === "category") {
+            const filteredQuestions = questions!.filter(question => {
+                if (filterEntity === "category") {
+                    return question.categories?.includes(filter)
+                }
+            }).map(n => n)
+    
+            if (filteredQuestions.length === 0) {
+                alert("No questions found for filter")
+                return
+            }
 
-        console.info("Filter cards")
-        const filteredQuestions = questions!.filter(question => {
-            if (filterEntity === "category") {
-                return question.categories?.includes(filter)
-            } 
-        }).map(n => n)
-
-        if (filteredQuestions.length === 0) {
-            alert("No questions found for filter")
+            const newCards = await setupCards(filteredQuestions!)
+            await setFilteredCards(newCards)
+            setCurrentCardIndex(0)
+            changeQuestion()
             return
         }
+        if (filterEntity === "difficulty") {
+            if (filter === "easy") {
+                const filteredCards = cards!.filter(card => card.difficulty < 5)
+                if (!filteredCards.length) {
+                    alert("No questions found for filter")
+                    return
+                }
+                await setFilteredCards(filteredCards)
+                setCurrentCardIndex(0)
+                changeQuestion()
+                return
+            }
 
-        const newCards = await setupCards(filteredQuestions!)
-        await setCards(newCards)
-
+            if (filter === "hard") {
+                const filteredCards = cards!.filter(card => card.difficulty >= 5)
+                if (!filteredCards.length) {
+                    alert("No questions found for filter")
+                    return
+                }
+                await setFilteredCards(filteredCards)
+                setCurrentCardIndex(0)
+                changeQuestion()
+                return
+            }
+        }
+        await setFilteredCards(cards)
         setCurrentCardIndex(0)
+        changeQuestion()
     }
 
     useEffect(() => {
@@ -127,13 +160,15 @@ export default function Home() {
 
     const categories = questions?.map(question => question.categories).flat().filter((v, i, a) => a.indexOf(v) === i).filter(n => n)
 
+
+
     return (
         <div className="container-xl">
             <div className="row">
                 <div className="col-12 mx-auto p-4 py-md-5">
                     <main>
                         {currentCardIndex === null && (
-                            <div className="d-flex justify-content-center">
+                            <div className="d-flex justify-content-center align-items-center" style={{minHeight: "380px"}}>
                                 <div className="spinner-border" role="status">
                                     <span className="visually-hidden">Loading...</span>
                                 </div>
@@ -148,28 +183,56 @@ export default function Home() {
                             </div>
                         )}
                         {Boolean(questions?.length && cards?.length && currentCardIndex !== null) && (
-                            <>                                
+                            <>
                                 <Question
                                     question={getNextCard()}
                                     giveFeedback={updateCards}
                                     changeQuestion={changeQuestion}
-                                />
-                                <div className="col-12 col-sm-4 mt-5" >
-                                    Filter Category: 
-                                    <select className="form-select" aria-label="Default select example" onChange={(e) => filterCards(e, FilterEntity.category)}>
-                                        <option>No filter</option>
-                                        {categories?.map(category => (
-                                            <option key={category} value={category}>{category}</option>
-                                        ))}
-                                    </select>
-                                </div>
+                                />                                
                             </>
                         )}
+                         <div className="row justify-content-center">
+                            <div className="col-12 col-sm-4 mt-5" >
+                                <div className="form-border-transparent form-fs-lg bg-light rounded-3 h-100 p-3">
+                                    <label className="mb-1 text-muted">Filter By Difficulty:</label>
+                                    <div className="choices">
+                                        <div className="choices__inner">
+                                            <select className="form-select" aria-label="Default select example" onChange={(e) => filterCards(e, FilterEntity.difficulty)}>                                                        
+                                                <option value="medium">Medium</option>
+                                                <option value="easy">Easy</option>
+                                                <option value="hard">Hard</option>
+                                            </select>                                               
+                                        </div>
+                                    </div>
+                                    <p className="pt-3 fw-lighter" style={{ fontSize: "0.75rem" }}>
+                                        Easy means you only see questions that you have answered correctly. Medium means you see all questions. Hard means you only see questions that you have answered incorrectly.
+                                        Default = Medium.</p>
+                                </div>
+                            </div>
+
+                            {categories && categories.length > 0 && (
+                                <div className="col-12 col-sm-4 mt-5" >
+                                    <div className="form-border-transparent form-fs-lg bg-light rounded-3 h-100 p-3">
+                                    <label className="mb-1 text-muted">Filter By Category:</label>
+                                        <div className="choices">
+                                            <div className="choices__inner">
+                                                <select className="form-select" aria-label="Default select example" onChange={(e) => filterCards(e, FilterEntity.category)}>
+                                                    <option>Select an Option</option>
+                                                    {categories?.map(category => (
+                                                        <option key={category} value={category}>{category}</option>
+                                                    ))}
+                                                </select>                                               
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div> 
                     </main>
                 </div>
             </div>
             <footer className="pt-5 my-5 text-body-secondary border-top">
-                Created by SaschaM · © 2023
+                Created by <a href="https://github.com/SaschaMet" target="_blank" >SaschaM</a> · © {new Date().getFullYear()}
             </footer>
         </div>
     )

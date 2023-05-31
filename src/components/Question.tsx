@@ -4,15 +4,15 @@ import Image from 'next/image'
 
 const stripWhitespace = (str: string) => str.replace(/\s/g, "")
 
-function getImageDimensiion(screenSize: number) {
-    return Math.min(350, screenSize * 0.9);
+function getImageDimension(screenSize: number, minDimension = 250) {
+    return Math.min(minDimension, screenSize * 0.75);
 }
-
 
 export default function Question({ question, giveFeedback, changeQuestion }: { question: QuestionType, giveFeedback: Function, changeQuestion: Function }) {
 
     const [showNextQuestionButton, setShowNextQuestionButton] = useState(false)
     const [showCorrectAnswer, setShowCorrectAnswer] = useState(false)
+    const [flipped, setFlipped] = useState(false);
 
     const answerMultipleChoice = () => {
         let correctlyAnswered = true
@@ -68,73 +68,82 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
         if (question.options && question.options.length > 1) {
             showMultipleChoiceAnswers()
         } else {
+            setFlipped(!flipped);
             setShowCorrectAnswer(true)
             setShowNextQuestionButton(true)
         }
     }
-
+   
     return (
-        <div className="card p-3 w-100">            
-            <div className="card-body row">
-                <h5 className="card-title col-12">{question.questionText}</h5>
-                {question.imageUrlQuestion && (
-                    <div className="col-12 mt-5">
-                        <Image
-                            src={question.imageUrlQuestion}
-                            width={getImageDimensiion(window.screen.width)}
-                            height={getImageDimensiion(window.screen.height)}
-                            alt="Explanation Image"
-                        />
-                    </div>
-                )}
-            </div>
-            {question.options && (
-                <ul className="list-group list-group-flush border-0" id="answer-options">
-                    {question.options.map((option) => (
-                        <li className="list-group-item border-0" key={stripWhitespace(option)}>
-                            <input className="form-check-input me-3" type="checkbox" value={option} id={`answer-${stripWhitespace(option)}`} />
-                            <label className="form-check-label stretched-link" htmlFor={`answer-${stripWhitespace(option)}`}>{option}</label>
-                        </li>
-                    ))}
-                </ul>
-            )}
-            {!question.options && showCorrectAnswer && (
-                <div className="px-3">
-                    <p>{question.correctAnswer[0]}</p>
-                    <div className="row pt-4">
-                        <button type="button" onClick={() => answerOpenEndedQuestion(false)} className="btn btn-danger m-auto col-auto">Incorrect</button>
-                        <button type="button" onClick={() => answerOpenEndedQuestion(true)} className="btn btn-success m-auto col-auto">Correct</button>
-                    </div>
+        <>
+            <div className={`card question-card ${flipped ? 'flipped' : ''} shadow border-0 p-3 w-100 m-auto`}  > 
+                <div className="card-front card-body row p-3">
+                    <h5 className="card-title col-12 d-flex justify-content-center align-items-center">{question.questionText}</h5>
+
+                    {question.imageUrlQuestion && (
+                        <div className="col-12 mt-5">
+                            <Image
+                                src={question.imageUrlQuestion}
+                                width={getImageDimension(window.screen.width)}
+                                height={getImageDimension(window.screen.height)}
+                                alt="Explanation Image"
+                            />
+                        </div>
+                    )}
+
+                    {question.options && (
+                        <ul className="list-group list-group-flush border-0" id="answer-options">
+                            {question.options.map((option) => (
+                                <li className="list-group-item border-0" key={stripWhitespace(option)}>
+                                    <input className="form-check-input me-3" type="checkbox" value={option} id={`answer-${stripWhitespace(option)}`} />
+                                    <label className="form-check-label stretched-link" htmlFor={`answer-${stripWhitespace(option)}`}>{option}</label>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+
+                    {!showNextQuestionButton && (
+                        <button type="button" className="btn btn-sm btn-outline-secondary text-center m-auto col-auto" onClick={showAnswer}>Show Answer</button>
+                    )}
+
+                    {showNextQuestionButton && question.options?.length && (
+                        <button type="button" className="btn btn-sm btn-outline-secondary text-center m-auto col-auto" onClick={nextQuestion}>Next Question 👉</button>
+                    )}
+
                 </div>
-            )}
-            <div className="card-body row">
-                {!showNextQuestionButton && (
-                    <button type="button" className="btn btn-secondary text-center m-auto col-auto" onClick={showAnswer}>Show Answer</button>
-                )}
-                {showNextQuestionButton && question.options?.length && (
-                    <button type="button" className="btn btn-secondary text-center m-auto col-auto" onClick={nextQuestion}>Next Question</button>
-                )}
-                {showNextQuestionButton && question.explanation && (
-                    <div className="col-12 mt-5">
-                        {question.explanation}
-                    </div>
-                )}
-                {showNextQuestionButton && question.imageUrlExplanation && (
-                    <div className="col-12 mt-5">
-                        <Image
-                            src={question.imageUrlExplanation}
-                            width={getImageDimensiion(window.screen.width)}
-                            height={getImageDimensiion(window.screen.height)}
-                            alt="Explanation Image"
-                        />
-                    </div>
-                )}
-                {showNextQuestionButton && question.categories?.length && (
-                    <div className="col-12 mt-5">
-                        <p className="text-muted" >Categories: {question.categories.join(", ")}</p>
-                    </div>
-                )}
+                <div className="card-back card-body row align-content-center p-3">
+                    <p><span className="text-muted" >Answer:</span><br/>{question.correctAnswer[0]}</p>
+                    {showNextQuestionButton && question.explanation && (
+                        <div className="col-12">
+                            <p className="pb-0 mb-0 text-break">
+                                <span className="text-muted" >Explanation:</span><br/>
+                                {question.explanation}
+                            </p>
+                        </div>
+                    )}
+
+                    {showNextQuestionButton && question.imageUrlExplanation && (
+                        <div className="col-12">
+                            <Image
+                                src={question.imageUrlExplanation}
+                                width={getImageDimension(window.screen.width)}
+                                height={getImageDimension(window.screen.height)}
+                                alt="Explanation Image"
+                            />
+                        </div>
+                    )}
+                </div>
             </div>
-        </div>
-    )
+            {!question.options && showCorrectAnswer && (               
+            <div className="col-12 border p-3 mt-3 rounded d-sm-flex align-items-center justify-content-evenly text-center">                          
+                <p className="m-0 h5"> Was your answer correct? </p>
+                <div>
+                    <button type="button" onClick={() => answerOpenEndedQuestion(true)} className="btn btn-sm btn-success m-auto col-auto mx-3">Yes 👍</button>
+                    <button type="button" onClick={() => answerOpenEndedQuestion(false)} className="btn btn-sm btn-danger m-auto col-auto mx-3">No 👎</button>
+                </div>
+            </div>
+            )}
+            
+        </>
+    );
 }
