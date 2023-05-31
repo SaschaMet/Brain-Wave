@@ -1,7 +1,12 @@
 "use client"
-import React, { use, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Store } from "@/store"
 import { CardData, QuestionType } from "@/types"
+
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, scales } from 'chart.js';
+import { Pie } from 'react-chartjs-2';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 type StatisticsType = {
     numberOfQuestions: number,
@@ -45,6 +50,25 @@ const generateStatistics = (questions: QuestionType[], cards: CardData[]) => {
     }
 }
 
+const generateChartData = (statistics: StatisticsType) => {
+
+    return {
+        labels: ['Correct Answers', 'Incorrect Answers', 'New Questions'],
+        datasets: [
+            {
+                label: '# of Questions',
+                data: [statistics.numberOfCorrectAnswers, statistics.numberOfIncorrectAnswers, statistics.numberOfQuestionsNotYetAnswered],
+                backgroundColor: [
+                    'rgba(41, 164, 41, 0.8)',
+                    'rgba(255, 0, 0, 0.8)',
+                    'rgba(63, 63, 63, 0.6)'
+                ],        
+                borderWidth: 0,
+            },
+        ],
+    };
+}
+
 export default function StatisticsPage() {
 
     const questionStore = new Store('questions');
@@ -59,8 +83,6 @@ export default function StatisticsPage() {
 
         const questions = await questionStore.fetchAllItems() as QuestionType[]
         const cards = await cardStore.fetchAllItems() as CardData[]
-
-        console.log({ questions, cards })
 
         const statistics = generateStatistics(questions, cards)
         setStatistics(statistics)
@@ -83,50 +105,61 @@ export default function StatisticsPage() {
         )
     }
 
+    const data = generateChartData(statistics)
+    
+    console.log({data, statistics})
+
     return (
         <div className="container">
-            <h1>Statistics</h1>
-            <div className="row mt-5">
-                <figure className="col-12">
-                    <blockquote className="ps-2 blockquote">
-                        <p>{statistics.numberOfQuestions}</p>
-                    </blockquote>
-                    <figcaption className="blockquote-footer">
-                        Total number of questions
-                    </figcaption>
-                </figure>
-                <figure className="col-12">
-                    <blockquote className="ps-2 blockquote">
-                        <p>{statistics.numberOfIncorrectAnswers}</p>
-                    </blockquote>
-                    <figcaption className="blockquote-footer">
-                        Number of incorrect answers
-                    </figcaption>
-                </figure>
-                <figure className="col-12">
-                    <blockquote className="ps-2 blockquote">
-                        <p>{statistics.numberOfCorrectAnswers}</p>
-                    </blockquote>
-                    <figcaption className="blockquote-footer">
-                        Number of correct answers
-                    </figcaption>
-                </figure>
-                <figure className="col-12">
-                    <blockquote className="ps-2 blockquote">
-                        <p>{statistics.numberOfCardsWithGrade_2}</p>
-                    </blockquote>
-                    <figcaption className="blockquote-footer">
-                        Questions multiple times correctly answered
-                    </figcaption>
-                </figure>
-                <figure className="col-12">
-                    <blockquote className="ps-2 blockquote">
-                        <p>{statistics.numberOfQuestionsNotYetAnswered}</p>
-                    </blockquote>
-                    <figcaption className="blockquote-footer">
-                        Number of questions not yet answered at least one time correctly
-                    </figcaption>
-                </figure>
+            <h1>Statistics</h1>       
+            <div className="row">
+                <div className="row col-12 col-lg-7">
+                    <div className="mt-5 chart">
+                        <Pie data={data} />
+                    </div>
+                </div>
+                <div className="row col-12 col-lg-5">
+                    <figure className="col-12 my-3">
+                        <blockquote className="ps-2 blockquote">
+                            <p>{statistics.numberOfQuestions}</p>
+                        </blockquote>
+                        <figcaption className="blockquote-footer">
+                            Total number of questions
+                        </figcaption>
+                    </figure> 
+                    <figure className="col-12">
+                        <blockquote className="ps-2 blockquote">
+                            <p>{statistics.numberOfIncorrectAnswers}</p>
+                        </blockquote>
+                        <figcaption className="blockquote-footer">
+                            Number of incorrect answers
+                        </figcaption>
+                    </figure>
+                    <figure className="col-12">
+                        <blockquote className="ps-2 blockquote">
+                            <p>{statistics.numberOfCorrectAnswers}</p>
+                        </blockquote>
+                        <figcaption className="blockquote-footer">
+                            Number of correct answers
+                        </figcaption>
+                    </figure>
+                    <figure className="col-12">
+                        <blockquote className="ps-2 blockquote">
+                            <p>{statistics.numberOfCardsWithGrade_2}</p>
+                        </blockquote>
+                        <figcaption className="blockquote-footer">
+                            Questions multiple times correctly answered
+                        </figcaption>
+                    </figure>
+                    <figure className="col-12">
+                        <blockquote className="ps-2 blockquote">
+                            <p>{statistics.numberOfQuestionsNotYetAnswered}</p>
+                        </blockquote>
+                        <figcaption className="blockquote-footer">
+                            Number of questions not yet answered at least one time correctly
+                        </figcaption>
+                    </figure>
+                </div>            
             </div>
         </div>
     );

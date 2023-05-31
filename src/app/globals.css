@@ -6,7 +6,11 @@ a:hover {
     color: blue
 }
 
-
+.chart {
+    max-height: 500px;
+    margin: auto;
+    text-align: center;
+}
 
 .question-card {
     perspective: 1000px;
