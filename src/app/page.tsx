@@ -4,6 +4,7 @@ import { ChangeEvent, useEffect, useState } from "react"
 import LoadingSpinner from "@/components/LoadingSpinner"
 import { Store, setupCards, sortCardsForLearning } from "@/store"
 import Question from "../components/Question"
+import { Accordion, AccordionItem } from "@/components/Accordion"
 import fsrs from "../fsrs"
 
 import { QuestionType, CardData, FilterEntity } from "@/types"
@@ -19,8 +20,7 @@ export default function Home() {
     const [filteredCards, setFilteredCards] = useState<CardData[] | null>(null)
     const [currentCardIndex, setCurrentCardIndex] = useState<number | null>(null)
 
-    const [filter, setFilter] = useState<string | null>(null)
-    const [filterEntity, setFilterEntity] = useState<FilterEntity | null>(null)
+    const [showFilters, setShowFilters] = useState(false)
 
     const updateCards = (questionId: number, correctlyAnswered: boolean) => {
         if (cards) {
@@ -34,9 +34,7 @@ export default function Home() {
 
             newCards = newCards.filter(card => card.id !== questionId)
             newCards.push(newCard)
-
             newCards = sortCardsForLearning(newCards)
-
             cardStore.replaceItems(newCards)
         }
     }
@@ -97,9 +95,11 @@ export default function Home() {
             const newCards = await setupCards(questions)
             await setCards(newCards)
             await cardStore.replaceItems(newCards)
+            await setFilteredCards(newCards)
+        } else {
+            await setFilteredCards(cards)
         }
-
-        setFilteredCards(cards)
+        
         setCurrentCardIndex(0)
     }
 
@@ -160,8 +160,6 @@ export default function Home() {
 
     const categories = questions?.map(question => question.categories).flat().filter((v, i, a) => a.indexOf(v) === i).filter(n => n)
 
-
-
     return (
         <div className="container-xl">
             <div className="row">
@@ -176,7 +174,7 @@ export default function Home() {
                                 </p>
                             </div>
                         )}
-                        {Boolean(questions?.length && cards?.length && currentCardIndex !== null) && (
+                        {Boolean(questions?.length && cards?.length && filteredCards?.length && currentCardIndex !== null) && (
                             <>
                                 <Question
                                     question={getNextCard()}
@@ -185,7 +183,11 @@ export default function Home() {
                                 />                                
                             </>
                         )}
-                         <div className="row justify-content-center">
+                        <div className="form-check form-switch mt-3">
+                            <input className="form-check-input switch-input" type="checkbox" role="switch" id="showFilterSwitch" defaultChecked={showFilters} onChange={() => setShowFilters(!showFilters)} />
+                            <label className="form-check-label text-small" htmlFor="showFilterSwitch">Filter questions</label>
+                        </div>
+                        <div className={`row justify-content-center ${showFilters ? '' : 'collapse'}`}>
                             <div className="col-12 col-sm-4 mt-5" >
                                 <div className="form-border-transparent form-fs-lg bg-light rounded-3 h-100 p-3">
                                     <label className="mb-1 text-muted">Filter By Difficulty:</label>

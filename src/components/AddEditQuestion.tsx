@@ -36,7 +36,7 @@ const AddEditQuestion = (props: AddEditQuestionProps)  => {
                 </label>
                 {isNewQuestion && (
                     <div className="form-check form-switch mb-2">
-                        <input className="form-check-input" type="checkbox" role="switch" id="isMultipleChoiceSwitch" defaultChecked={isMultipleChoice} onChange={() => setIsMultipleChoice(!isMultipleChoice)} />
+                        <input className="form-check-input switch-input" type="checkbox" role="switch" id="isMultipleChoiceSwitch" defaultChecked={isMultipleChoice} onChange={() => setIsMultipleChoice(!isMultipleChoice)} />
                         <label className="form-check-label text-small" htmlFor="isMultipleChoiceSwitch">Multiple choice question?</label>
                     </div>
                 )}

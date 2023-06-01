@@ -1,5 +1,5 @@
 import { QuestionType } from "@/types"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from 'next/image'
 
 const stripWhitespace = (str: string) => str.replace(/\s/g, "")
@@ -9,10 +9,10 @@ function getImageDimension(screenSize: number, minDimension = 250) {
 }
 
 export default function Question({ question, giveFeedback, changeQuestion }: { question: QuestionType, giveFeedback: Function, changeQuestion: Function }) {
-
     const [showNextQuestionButton, setShowNextQuestionButton] = useState(false)
     const [showCorrectAnswer, setShowCorrectAnswer] = useState(false)
     const [flipped, setFlipped] = useState(false);
+    const [showBack, setShowBack] = useState(false);
 
     const answerMultipleChoice = () => {
         let correctlyAnswered = true
@@ -73,11 +73,21 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
             setShowNextQuestionButton(true)
         }
     }
+
+    useEffect(() => {
+        if (flipped) {
+            setTimeout(() => {
+                setShowBack(true)
+            }, 150);
+        } else {
+            setShowBack(false)
+        }
+    }, [flipped])
    
     return (
         <>
             <div className={`card question-card ${flipped ? 'flipped' : ''} shadow border-0 p-3 w-100 m-auto`}  > 
-                <div className="card-front card-body row p-3">
+                <div className={`card-front card-body row p-3 ${flipped ? 'hidden' : ''}`}>
                     <h5 className="card-title col-12 d-flex justify-content-center align-items-center">{question.questionText}</h5>
 
                     {question.imageUrlQuestion && (
@@ -95,8 +105,8 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
                         <ul className="list-group list-group-flush border-0" id="answer-options">
                             {question.options.map((option) => (
                                 <li className="list-group-item border-0" key={stripWhitespace(option)}>
-                                    <input className="form-check-input me-3" type="checkbox" value={option} id={`answer-${stripWhitespace(option)}`} />
-                                    <label className="form-check-label stretched-link" htmlFor={`answer-${stripWhitespace(option)}`}>{option}</label>
+                                    <input className="form-check-input me-2" type="checkbox" value={option} id={`answer-${stripWhitespace(option)}`} />
+                                    <label className="form-check-label stretched-link d-inline" htmlFor={`answer-${stripWhitespace(option)}`}>{option}</label>
                                 </li>
                             ))}
                         </ul>
@@ -111,7 +121,7 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
                     )}
 
                 </div>
-                <div className="card-back card-body row align-content-center p-3">
+                <div className={`card-back card-body row align-content-center p-3 ${showBack ? '' : 'hidden'}`}>
                     <p><span className="text-muted" >Answer:</span><br/>{question.correctAnswer[0]}</p>
                     {showNextQuestionButton && question.explanation && (
                         <div className="col-12">
@@ -135,13 +145,13 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
                 </div>
             </div>
             {!question.options && showCorrectAnswer && (               
-            <div className="col-12 border p-3 mt-3 rounded d-sm-flex align-items-center justify-content-evenly text-center">                          
-                <p className="m-0 h5"> Was your answer correct? </p>
-                <div>
-                    <button type="button" onClick={() => answerOpenEndedQuestion(true)} className="btn btn-sm btn-success m-auto col-auto mx-3">Yes 👍</button>
-                    <button type="button" onClick={() => answerOpenEndedQuestion(false)} className="btn btn-sm btn-danger m-auto col-auto mx-3">No 👎</button>
+                <div className="col-12 border p-3 mt-3 rounded d-sm-flex align-items-center justify-content-evenly text-center">                          
+                    <p className="m-0 h5"> Was your answer correct? </p>
+                    <div>
+                        <button type="button" onClick={() => answerOpenEndedQuestion(true)} className="btn btn-sm btn-success m-auto col-auto mx-3">Yes 👍</button>
+                        <button type="button" onClick={() => answerOpenEndedQuestion(false)} className="btn btn-sm btn-danger m-auto col-auto mx-3">No 👎</button>
+                    </div>
                 </div>
-            </div>
             )}
             
         </>

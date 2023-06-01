@@ -1,9 +1,9 @@
 a {
-    color: black
+    color: rgb(63, 63, 63)
 }
 
 a:hover {
-    color: blue
+    color: black
 }
 
 .form-control{
@@ -14,9 +14,13 @@ a:hover {
     background-color: whitesmoke;
 }
 
-.isMultipleChoiceSwitch {
-    outline: none;
-    box-shadow: none;
+.switch-input {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+button.navbar-toggler {
+    margin-left: auto;
 }
 
 .toast {
@@ -46,7 +50,7 @@ a:hover {
     font-weight: bolder;
 }
 
-.accordion-button:focus {
+.accordion-button:focus, button.navbar-toggler:focus {
     outline: none !important;
     box-shadow: none !important;
 }
@@ -71,16 +75,23 @@ a:hover {
     transform-style: preserve-3d;
     transition: transform 0.6s;
     width: 100%;
-    height: 380px;
+    height: 90vh;
+    overflow: auto;
 }
+
+@media (min-width: 600px) {
+    .question-card {
+      height: 400px;
+    }
+}
+
   
 .question-card.flipped {
     transform: rotateY(180deg);
 }
 
 .question-card .card-front,
-.question-card .card-back {
-    backface-visibility: hidden;
+.question-card .card-back {    
     position: absolute;
     top: 0;
     left: 0;
@@ -94,4 +105,9 @@ a:hover {
 
 .question-card .card-back {
     transform: rotateY(180deg);
+}
+
+.hidden {
+    backface-visibility: hidden;
+    visibility: hidden;
 }
