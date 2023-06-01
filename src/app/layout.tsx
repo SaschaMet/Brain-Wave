@@ -1,6 +1,4 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-
-import './globals.css'
+import './globals.scss'
 
 import Navbar from './navbar'
 

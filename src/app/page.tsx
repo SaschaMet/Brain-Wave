@@ -4,7 +4,6 @@ import { ChangeEvent, useEffect, useState } from "react"
 import LoadingSpinner from "@/components/LoadingSpinner"
 import { Store, setupCards, sortCardsForLearning } from "@/store"
 import Question from "../components/Question"
-import { Accordion, AccordionItem } from "@/components/Accordion"
 import fsrs from "../fsrs"
 
 import { QuestionType, CardData, FilterEntity } from "@/types"
