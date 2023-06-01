@@ -6,6 +6,7 @@ import { Store } from "@/store"
 import AddEditQuestion from '@/components/AddEditQuestion';
 import { ToastMessage } from '@/components/ToastMessage';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import FileUpload from '@/components/FileUploader';
 
 const newQuestionTemplate = {
     questionText: '',
@@ -187,16 +188,22 @@ const CreateNewQuestion = () => {
         <div className='container'>
             {loading ? 
                 <LoadingSpinner /> :
-                <AddEditQuestion 
-                    question={newQuestion}
-                    index={1}
-                    removeOption={removeOption}
-                    removeCategory={removeCategory}
-                    addCategory={addCategory}
-                    addOption={addOption}
-                    updateQuestion={updateQuestion}
-                    isNewQuestion={true}
-                />
+                <>
+                    <AddEditQuestion 
+                        question={newQuestion}
+                        index={1}
+                        removeOption={removeOption}
+                        removeCategory={removeCategory}
+                        addCategory={addCategory}
+                        addOption={addOption}
+                        updateQuestion={updateQuestion}
+                        isNewQuestion={true}
+                    />
+                    <div className='mt-5'>
+                        <hr />
+                        <FileUpload />
+                    </div>
+                </>
             }
             {toastMessage && <ToastMessage message={toastMessage.message} type={toastMessage.type} />}     
         </div>

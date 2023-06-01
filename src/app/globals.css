@@ -6,12 +6,28 @@ a:hover {
     color: black
 }
 
+@media (min-width: 768px) {
+    a.nav-link {
+        padding-left: 0 !important;
+        padding-right: 15px !important;
+    }
+}
+
 .form-control{
     font-size: 0.9rem
 }
 
 .modal-content {
     background-color: whitesmoke;
+}
+
+button, input {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+button:focus, input:focus, .form-control:focus {
+    border-color: inherit !important;
 }
 
 .switch-input {
