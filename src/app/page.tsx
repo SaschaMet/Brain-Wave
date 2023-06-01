@@ -1,7 +1,7 @@
 "use client"
 
 import { ChangeEvent, useEffect, useState } from "react"
-
+import LoadingSpinner from "@/components/LoadingSpinner"
 import { Store, setupCards, sortCardsForLearning } from "@/store"
 import Question from "../components/Question"
 import fsrs from "../fsrs"
@@ -167,13 +167,7 @@ export default function Home() {
             <div className="row">
                 <div className="col-12 mx-auto p-4 py-md-5">
                     <main>
-                        {currentCardIndex === null && (
-                            <div className="d-flex justify-content-center align-items-center" style={{minHeight: "380px"}}>
-                                <div className="spinner-border" role="status">
-                                    <span className="visually-hidden">Loading...</span>
-                                </div>
-                            </div>
-                        )}
+                        {currentCardIndex === null && (<LoadingSpinner />)}
                         {questions && questions.length === 0 && (
                             <div className="alert alert-warning" role="alert">
                                 <h4 className="alert-heading">No questions found!</h4>

@@ -40,3 +40,8 @@ export enum FilterEntity {
     category = 'category',
     difficulty = 'difficulty',
 }
+
+export type ToastMessageProps = {
+    message: string;
+    type: 'success' | 'error';
+};

@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from "react"
 import { Store } from "@/store"
 import { CardData, QuestionType } from "@/types"
-
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, scales } from 'chart.js';
+import LoadingSpinner from "@/components/LoadingSpinner"
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -96,18 +96,10 @@ export default function StatisticsPage() {
     }, [])
 
     if (loading || !statistics) {
-        return (
-            <div className="d-flex justify-content-center">
-                <div className="spinner-border" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        )
+        return <LoadingSpinner />
     }
 
     const data = generateChartData(statistics)
-    
-    console.log({data, statistics})
 
     return (
         <div className="container">

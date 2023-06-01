@@ -6,6 +6,60 @@ a:hover {
     color: blue
 }
 
+.form-control{
+    font-size: 0.9rem
+}
+
+.modal-content {
+    background-color: whitesmoke;
+}
+
+.isMultipleChoiceSwitch {
+    outline: none;
+    box-shadow: none;
+}
+
+.toast {
+    bottom: 2%;
+    right: 2%;
+    width: 300px;
+    z-index: 9999;
+    position: fixed;
+}
+
+.text-small {
+    font-size: 0.8rem
+}
+
+.accordion-item {
+    margin-bottom: 1rem;
+    border-radius: .25rem;
+    border: 1px solid rgba(0,0,0,.125) !important;
+}
+
+.accordion-button {
+    border: none !important;
+    color: black !important;
+    box-shadow: none !important;
+    background-color: inherit !important;   
+    font-size: 1.05rem;
+    font-weight: bolder;
+}
+
+.accordion-button:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.accordion-button::after {
+    content: none !important;
+}
+
+.form-check-input.question-option:checked {
+    background-color: green;
+    border-color: green;
+}
+
 .chart {
     max-height: 500px;
     margin: auto;
