@@ -1,12 +1,12 @@
 "use client"
 
 import React, { useEffect, useState } from 'react';
-import { QuestionType, ToastMessageProps } from "@/types"
-import { Store } from "@/store"
-import AddEditQuestion from '@/components/AddEditQuestion';
-import { ToastMessage } from '@/components/ToastMessage';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import FileUpload from '@/components/FileUploader';
+import { QuestionType, ToastMessageProps } from "../../types"
+import { Store } from "../../Store"
+import AddEditQuestion from '../../components/AddEditQuestion';
+import { ToastMessage } from '../../components/ToastMessage';
+import LoadingSpinner from '../../components/LoadingSpinner';
+import FileUpload from '../../components/FileUploader';
 
 const newQuestionTemplate = {
     questionText: '',

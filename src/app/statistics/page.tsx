@@ -1,8 +1,8 @@
 "use client"
 import React, { useEffect, useState } from "react"
-import { Store } from "@/store"
-import { CardData, QuestionType } from "@/types"
-import LoadingSpinner from "@/components/LoadingSpinner"
+import { Store } from "../../Store"
+import { CardData, QuestionType } from "../../types"
+import LoadingSpinner from "../../components/LoadingSpinner"
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 

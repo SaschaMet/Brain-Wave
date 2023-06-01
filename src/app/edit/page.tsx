@@ -1,13 +1,13 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import { QuestionType, ToastMessageProps } from "@/types"
-import { Store } from "@/store"
-import AddEditQuestion from '@/components/AddEditQuestion';
-import { Accordion, AccordionItem } from "@/components/Accordion"
-import { ToastMessage } from '@/components/ToastMessage';
-import Modal from '@/components/Modal';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import { QuestionType, ToastMessageProps } from "../../types"
+import { Store } from "../../Store"
+import AddEditQuestion from '../../components/AddEditQuestion';
+import { Accordion, AccordionItem } from "../../components/Accordion"
+import { ToastMessage } from '../../components/ToastMessage';
+import Modal from '../../components/Modal';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const QuestionEditor = () => {
     const questionStore = new Store('questions');

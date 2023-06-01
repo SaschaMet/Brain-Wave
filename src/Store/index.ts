@@ -1,7 +1,7 @@
 import { LocalStorageItemStorage } from './LocalStorageItemStorage';
 import fsrs, { generateCardData } from "../fsrs"
 
-import { QuestionType, CardData } from "@/types";
+import { QuestionType, CardData } from "../types";
 
 let storageModule = LocalStorageItemStorage;
 

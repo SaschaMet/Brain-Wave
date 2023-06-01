@@ -1,8 +1,8 @@
-import { QuestionType, ToastMessageProps } from '@/types';
+import { QuestionType, ToastMessageProps } from '../types';
 import React, { useEffect, useState } from 'react';
 import { ToastMessage } from './ToastMessage';
 import Modal from './Modal';
-import { Store } from "@/store"
+import { Store } from "../Store"
 
 const FileUpload = () => {
     const questionStore = new Store('questions');

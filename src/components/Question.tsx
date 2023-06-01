@@ -1,4 +1,4 @@
-import { QuestionType } from "@/types"
+import { QuestionType } from "../types"
 import { useEffect, useState } from "react"
 import Image from 'next/image'
 

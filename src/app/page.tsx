@@ -1,12 +1,12 @@
 "use client"
 
 import { ChangeEvent, useEffect, useState } from "react"
-import LoadingSpinner from "@/components/LoadingSpinner"
-import { Store, setupCards, sortCardsForLearning } from "@/store"
+import LoadingSpinner from "../components/LoadingSpinner"
+import { Store, setupCards, sortCardsForLearning } from "../Store"
 import Question from "../components/Question"
 import fsrs from "../fsrs"
 
-import { QuestionType, CardData, FilterEntity } from "@/types"
+import { QuestionType, CardData, FilterEntity } from "../types"
 
 export default function Home() {
 
