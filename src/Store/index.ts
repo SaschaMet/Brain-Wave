@@ -36,3 +36,25 @@ export const setupCards = (questions: QuestionType[]) => {
     })
     return sortCardsForLearning(cards)
 }
+
+export const getUniqueCategories = (items: QuestionType[]) => {
+    const categories: string[] = [];
+    items.forEach((item: any) => {
+        item.categories.forEach((category: string) => {
+            if (!categories.includes(category)) {
+                categories.push(category);
+            }
+        });
+    });
+    return categories;
+}
+
+export const searchQuestions = (questions: QuestionType[], searchText: string) => {
+    return questions.filter((question) => {
+        const search = searchText.toLowerCase();
+        const questionText = question.questionText.toLowerCase();
+        const answersText = question.correctAnswer.join(" ").toLowerCase();
+        const categories = question.categories.join(" ").toLowerCase();
+        return questionText.includes(search) || answersText.includes(search) || categories.includes(search);
+    });
+}

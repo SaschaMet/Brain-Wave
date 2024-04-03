@@ -83,10 +83,10 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
             setShowBack(false)
         }
     }, [flipped])
-   
+
     return (
         <>
-            <div className={`card question-card ${flipped ? 'flipped' : ''} shadow border-0 p-3 w-100 m-auto`}  > 
+            <div className={`card question-card ${flipped ? 'flipped' : ''} shadow border-0 p-3 w-100 m-auto`}  >
                 <div className={`card-front card-body row p-3 ${flipped ? 'hidden' : ''}`}>
                     <h5 className="card-title col-12 d-flex justify-content-center align-items-center">{question.questionText}</h5>
 
@@ -122,11 +122,23 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
 
                 </div>
                 <div className={`card-back card-body row align-content-center p-3 ${showBack ? '' : 'hidden'}`}>
-                    <p><span className="text-muted" >Answer:</span><br/>{question.correctAnswer[0]}</p>
+
+                    <h5 className="card-title col-12 d-flex justify-content-center align-items-center">{question.questionText}</h5>
+                    <br />
+                    <br />
+
+                    {question.options && question.correctAnswer.map(answer => (
+                        <p key={answer}><span className="text-muted" >Answer:</span><br />{answer}</p>
+                    ))}
+
+                    {!question.options && (
+                        <textarea className="form-control bg-white show-answer-correctAnswer" disabled rows={12} name={`answer-${question.id}`} id={`question-${question.id}-answer`} defaultValue={question.correctAnswer[0]} placeholder='The answer to the question is ...' />
+                    )}
+
                     {showNextQuestionButton && question.explanation && (
                         <div className="col-12">
                             <p className="pb-0 mb-0 text-break">
-                                <span className="text-muted" >Explanation:</span><br/>
+                                <span className="text-muted" >Explanation:</span><br />
                                 {question.explanation}
                             </p>
                         </div>
@@ -144,8 +156,8 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
                     )}
                 </div>
             </div>
-            {!question.options && showCorrectAnswer && (               
-                <div className="col-12 border p-3 mt-3 rounded d-sm-flex align-items-center justify-content-evenly text-center">                          
+            {!question.options && showCorrectAnswer && (
+                <div className="col-12 border p-3 mt-4 rounded d-sm-flex align-items-center justify-content-evenly text-center">
                     <p className="m-0 h5"> Was your answer correct? </p>
                     <div>
                         <button type="button" onClick={() => answerOpenEndedQuestion(true)} className="btn btn-sm btn-success m-auto col-auto mx-3">Yes 👍</button>
@@ -153,7 +165,7 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
                     </div>
                 </div>
             )}
-            
+
         </>
     );
 }

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { QuestionType, ToastMessageProps } from "../../types"
-import { Store } from "../../Store"
+import { Store, getUniqueCategories } from "../../Store"
 import AddEditQuestion from '../../components/AddEditQuestion';
 import { ToastMessage } from '../../components/ToastMessage';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -22,15 +22,17 @@ const CreateNewQuestion = () => {
     const [newQuestion, setNewQuestion] = useState<QuestionType>(newQuestionTemplate);
     const [toastMessage, setToastMessage] = useState<ToastMessageProps | null>(null);
 
+    const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
+
     const removeOption = (answerIndex: number) => {
-        try {            
+        try {
             const newOptions = newQuestion.options?.filter((option, index) => index !== answerIndex);
             if (newOptions?.length && newOptions.length >= 2) {
                 newQuestion.options = newOptions;
-                setNewQuestion({...newQuestion});                
+                setNewQuestion({ ...newQuestion });
             } else {
                 setToastMessage({
-                    message: 'A question must have at least two options', 
+                    message: 'A question must have at least two options',
                     type: 'error'
                 });
             }
@@ -43,7 +45,7 @@ const CreateNewQuestion = () => {
         try {
             const newCategories = newQuestion.categories?.filter((cat) => cat !== category);
             newQuestion.categories = newCategories;
-            setNewQuestion({...newQuestion});  
+            setNewQuestion({ ...newQuestion });
         } catch (error) {
             console.error(error);
         }
@@ -52,22 +54,22 @@ const CreateNewQuestion = () => {
     const addOption = () => {
         const options = newQuestion.options ? newQuestion.options : [];
         newQuestion.options = [...options, ''];
-        setNewQuestion({...newQuestion});  
+        setNewQuestion({ ...newQuestion });
     };
 
     const addCategory = () => {
         const categories = newQuestion.categories ? newQuestion.categories : [];
         newQuestion.categories = [...categories, ''];
-        setNewQuestion({...newQuestion});  
+        setNewQuestion({ ...newQuestion });
     };
 
     const updateQuestion = async (e: React.MouseEvent<HTMLButtonElement>) => {
         try {
             e.preventDefault();
-            
+
             await questionStore.setup();
             const questions = await questionStore.fetchAllItems() as QuestionType[]
-            
+
             const element = document.getElementById("accordion-element-1") as HTMLDivElement;
             const isMultipleChoice = document.getElementById("isMultipleChoiceSwitch") as HTMLInputElement;
 
@@ -81,17 +83,17 @@ const CreateNewQuestion = () => {
             }
 
             let explanation = element.querySelector(`#question-1-explanation`) as HTMLTextAreaElement;
-            if (explanation && explanation.value !== ''){
+            if (explanation && explanation.value !== '') {
                 explanation.value = explanation.value.trim();
             }
 
             let imageUrlQuestion = element.querySelector("#image-url-question") as HTMLInputElement;
-            if (imageUrlQuestion && imageUrlQuestion.value !== ''){
+            if (imageUrlQuestion && imageUrlQuestion.value !== '') {
                 imageUrlQuestion.value = imageUrlQuestion.value.trim();
             }
-    
+
             let imageUrlExplanation = element.querySelector("#image-url-explanation") as HTMLInputElement;
-            if (imageUrlExplanation && imageUrlExplanation.value !== ''){
+            if (imageUrlExplanation && imageUrlExplanation.value !== '') {
                 imageUrlExplanation.value = imageUrlExplanation.value.trim();
             }
 
@@ -105,7 +107,7 @@ const CreateNewQuestion = () => {
             const updatedQuestion = {
                 id: questions.length + 1,
                 categories,
-                correctAnswer : [],
+                correctAnswer: [],
                 questionText: question.value,
                 explanation: explanation.value === '' ? "" : explanation.value,
                 imageUrlQuestion: imageUrlQuestion.value === '' ? "" : imageUrlQuestion.value,
@@ -135,7 +137,7 @@ const CreateNewQuestion = () => {
 
                 if (!newCorrectAnswers.length) {
                     setToastMessage({
-                        message: 'Please select a correct answer', 
+                        message: 'Please select a correct answer',
                         type: 'error'
                     });
                     return;
@@ -167,7 +169,7 @@ const CreateNewQuestion = () => {
             }, 350);
 
             setToastMessage({
-                message: 'Added Question successfully!', 
+                message: 'Added Question successfully!',
                 type: 'success'
             });
 
@@ -175,7 +177,27 @@ const CreateNewQuestion = () => {
             console.error(error);
         }
     };
-    
+
+    const setup = async () => {
+        try {
+            await questionStore.setup()
+            const questions = await questionStore.fetchAllItems() as QuestionType[];
+            const uniqueCategories = getUniqueCategories(questions);
+            setUniqueCategories(uniqueCategories)
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setLoading(false);
+        }
+    }
+
+
+
+    useEffect(() => {
+        setup()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     useEffect(() => {
         if (toastMessage) {
             setTimeout(() => {
@@ -184,12 +206,14 @@ const CreateNewQuestion = () => {
         }
     }, [toastMessage]);
 
+
+
     return (
-        <div className='container'>
-            {loading ? 
+        <div className='container pt-5'>
+            {loading ?
                 <LoadingSpinner /> :
                 <>
-                    <AddEditQuestion 
+                    <AddEditQuestion
                         question={newQuestion}
                         index={1}
                         removeOption={removeOption}
@@ -198,6 +222,7 @@ const CreateNewQuestion = () => {
                         addOption={addOption}
                         updateQuestion={updateQuestion}
                         isNewQuestion={true}
+                        uniqueCategories={uniqueCategories}
                     />
                     <div className='mt-5'>
                         <hr />
@@ -205,7 +230,7 @@ const CreateNewQuestion = () => {
                     </div>
                 </>
             }
-            {toastMessage && <ToastMessage message={toastMessage.message} type={toastMessage.type} />}     
+            {toastMessage && <ToastMessage message={toastMessage.message} type={toastMessage.type} />}
         </div>
     );
 

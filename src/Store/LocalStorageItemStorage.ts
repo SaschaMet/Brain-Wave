@@ -33,5 +33,6 @@ export class LocalStorageItemStorage<T> extends ItemStorage<T> {
         const itemsJson = JSON.stringify(this.items);
         localStorage.setItem(this.storageKey, itemsJson);
     }
+
 }
 

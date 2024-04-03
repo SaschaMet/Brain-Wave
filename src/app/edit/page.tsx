@@ -1,8 +1,10 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
+import { useDebounce, useDebounceCallback } from '@react-hook/debounce'
+
 import { QuestionType, ToastMessageProps } from "../../types"
-import { Store } from "../../Store"
+import { Store, getUniqueCategories, searchQuestions } from "../../Store"
 import AddEditQuestion from '../../components/AddEditQuestion';
 import { Accordion, AccordionItem } from "../../components/Accordion"
 import { ToastMessage } from '../../components/ToastMessage';
@@ -14,6 +16,8 @@ const QuestionEditor = () => {
 
     const [loading, setLoading] = useState<boolean>(true);
     const [questions, setQuestions] = useState<QuestionType[]>([]);
+    const [allQuestions, setAllQuestions] = useState<QuestionType[]>([]);
+    const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
 
     const [showModal, setShowModal] = useState<boolean>(false);
     const [toastMessage, setToastMessage] = useState<ToastMessageProps | null>(null);
@@ -26,17 +30,17 @@ const QuestionEditor = () => {
         } else {
             setShowModal(false);
             setQuestionToDelete(null);
-        }        
+        }
     }
 
     const deleteQuestion = async () => {
-        const updatedQuestions = questions.filter((question, index) => index !== questionToDelete);        
+        const updatedQuestions = questions.filter((question, index) => index !== questionToDelete);
         setQuestions(updatedQuestions);
         await questionStore.replaceItems(updatedQuestions)
         setShowModal(false);
         setQuestionToDelete(null);
         setToastMessage({
-            message: 'Question deleted successfully', 
+            message: 'Question deleted successfully',
             type: 'success'
         });
     };
@@ -53,7 +57,7 @@ const QuestionEditor = () => {
                 setQuestions(updatedQuestions);
             } else {
                 setToastMessage({
-                    message: 'A question must have at least two options', 
+                    message: 'A question must have at least two options',
                     type: 'error'
                 });
             }
@@ -104,17 +108,17 @@ const QuestionEditor = () => {
             if (!element) throw new Error('Could not find accordion element');
 
             let explanation = element.querySelector(`#question-${questionIndex}-explanation`) as HTMLTextAreaElement;
-            if (explanation && explanation.value !== ''){
+            if (explanation && explanation.value !== '') {
                 explanation.value = explanation.value.trim();
             }
 
             let imageUrlQuestion = element.querySelector("#image-url-question") as HTMLInputElement;
-            if (imageUrlQuestion && imageUrlQuestion.value !== ''){
+            if (imageUrlQuestion && imageUrlQuestion.value !== '') {
                 imageUrlQuestion.value = imageUrlQuestion.value.trim();
             }
-    
+
             let imageUrlExplanation = element.querySelector("#image-url-explanation") as HTMLInputElement;
-            if (imageUrlExplanation && imageUrlExplanation.value !== ''){
+            if (imageUrlExplanation && imageUrlExplanation.value !== '') {
                 imageUrlExplanation.value = imageUrlExplanation.value.trim();
             }
 
@@ -141,7 +145,7 @@ const QuestionEditor = () => {
 
                 if (!updatedCorrectAnswer.length) {
                     setToastMessage({
-                        message: 'Please select a correct answer', 
+                        message: 'Please select a correct answer',
                         type: 'error'
                     });
                     return;
@@ -171,7 +175,7 @@ const QuestionEditor = () => {
                 // get the new question text
                 const questionTextElement = element.querySelector(`#question-${questionIndex}-text`) as HTMLInputElement;
                 // get the new answer
-                const answerElement = element.querySelector(`#question-${questionIndex}-answer`) as HTMLInputElement;               
+                const answerElement = element.querySelector(`#question-${questionIndex}-answer`) as HTMLInputElement;
 
                 // update the question
                 const updatedQuestion = {
@@ -192,7 +196,7 @@ const QuestionEditor = () => {
             }
 
             setToastMessage({
-                message: 'Question updated successfully!', 
+                message: 'Question updated successfully!',
                 type: 'success'
             });
 
@@ -201,11 +205,26 @@ const QuestionEditor = () => {
         }
     };
 
+    const debouncedSearch = useDebounceCallback(() => {
+        const searchText = (document.querySelector('input[type="text"]') as HTMLInputElement).value;
+
+        if (!searchText || searchText.length < 3) {
+            setQuestions(allQuestions);
+            return;
+        }
+
+        const filteredQuestions = searchQuestions(questions, searchText);
+        setQuestions(filteredQuestions);
+    }, 300);
+
     const setup = async () => {
         try {
             await questionStore.setup()
             const questions = await questionStore.fetchAllItems() as QuestionType[];
+            const uniqueCategories = getUniqueCategories(questions);
             setQuestions(questions)
+            setAllQuestions(questions)
+            setUniqueCategories(uniqueCategories)
         } catch (error) {
             console.error(error)
         } finally {
@@ -217,7 +236,7 @@ const QuestionEditor = () => {
         setup()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    
+
     useEffect(() => {
         if (toastMessage) {
             setTimeout(() => {
@@ -234,14 +253,22 @@ const QuestionEditor = () => {
         }
     }, [showModal]);
 
+
+
     if (loading) return (<LoadingSpinner />);
-        
+
     return (
-        <div className='container'>
+        <div className='container pt-5'>
+            <div className='pb-5'>
+                <input type="text" className="form-control" placeholder="Search questions by text & categories ..." aria-label="Search questions by text & categories" aria-describedby="button-search" onKeyUp={debouncedSearch} />
+            </div>
+            <div className='pb-5 text-muted text-small'>
+                Questions: {questions.length} of {questions.length}
+            </div>
             <Accordion>
                 {questions.map((question, index) => (
                     <AccordionItem title={question.questionText} key={question.id}>
-                        <AddEditQuestion 
+                        <AddEditQuestion
                             index={index}
                             question={question}
                             addOption={addOption}
@@ -250,12 +277,13 @@ const QuestionEditor = () => {
                             updateQuestion={updateQuestion}
                             removeCategory={removeCategory}
                             deleteQuestion={confirmQuestionDeletion}
+                            uniqueCategories={uniqueCategories}
                         />
                     </AccordionItem>
                 ))}
-            </Accordion>   
+            </Accordion>
             {toastMessage && <ToastMessage message={toastMessage.message} type={toastMessage.type} />}
-            {showModal && <Modal title='Delete Question' message='Are you sure you want to delete the question?' confirmAction={deleteQuestion} cancelAction={() => setShowModal(false)}  />}              
+            {showModal && <Modal title='Delete Question' message='Are you sure you want to delete the question?' confirmAction={deleteQuestion} cancelAction={() => setShowModal(false)} />}
         </div>
     );
 };

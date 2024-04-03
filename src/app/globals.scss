@@ -64,7 +64,7 @@ button.navbar-toggler {
     border: none !important;
     color: black !important;
     box-shadow: none !important;
-    background-color: inherit !important;   
+    background-color: inherit !important;
     font-size: 1.05rem;
     font-weight: bolder;
 }
@@ -94,23 +94,23 @@ button.navbar-toggler {
     transform-style: preserve-3d;
     transition: transform 0.6s;
     width: 100%;
-    height: 90vh;
+    min-height: 60vh;
     overflow: auto;
 }
 
 @media (min-width: 600px) {
     .question-card {
-      height: 400px;
+      min-height: 400px;
     }
 }
 
-  
+
 .question-card.flipped {
     transform: rotateY(180deg);
 }
 
 .question-card .card-front,
-.question-card .card-back {    
+.question-card .card-back {
     position: absolute;
     top: 0;
     left: 0;
@@ -126,7 +126,22 @@ button.navbar-toggler {
     transform: rotateY(180deg);
 }
 
+.show-answer-correctAnswer {
+    width: 75vw;
+    margin: auto;
+}
+
+@media (min-width: 1200px) {
+    .show-answer-correctAnswer {
+       width: 800px
+    }
+}
+
 .hidden {
     backface-visibility: hidden;
     visibility: hidden;
+}
+
+.add-existing-category {
+    cursor: pointer;
 }
