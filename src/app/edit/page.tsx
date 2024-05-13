@@ -34,9 +34,9 @@ const QuestionEditor = () => {
     }
 
     const deleteQuestion = async () => {
-        const updatedQuestions = questions.filter((question, index) => index !== questionToDelete);
+        await questionStore.deleteItem(questionToDelete as number)
+        const updatedQuestions = await questionStore.fetchAllItems() as QuestionType[];
         setQuestions(updatedQuestions);
-        await questionStore.replaceItems(updatedQuestions)
         setShowModal(false);
         setQuestionToDelete(null);
         setToastMessage({
@@ -170,7 +170,7 @@ const QuestionEditor = () => {
                 const updatedQuestions = [...questions];
                 updatedQuestions[questionIndex] = updatedQuestion;
                 setQuestions(updatedQuestions);
-                await questionStore.replaceItems(updatedQuestions)
+                await questionStore.updateItem(questionIndex, updatedQuestion)
             } else {
                 // get the new question text
                 const questionTextElement = element.querySelector(`#question-${questionIndex}-text`) as HTMLInputElement;
@@ -191,8 +191,7 @@ const QuestionEditor = () => {
                 const updatedQuestions = [...questions];
                 updatedQuestions[questionIndex] = updatedQuestion;
                 setQuestions(updatedQuestions);
-                await questionStore.replaceItems(updatedQuestions)
-
+                await questionStore.updateItem(questionIndex, updatedQuestion)
             }
 
             setToastMessage({

@@ -9,18 +9,27 @@ export class ItemStorage<T> {
         this.items = newItems;
     }
 
-    storeMultipleItems(newItems: T[]): void {
-        this.items = [...this.items, ...newItems];
-    }
-
     fetchAllItems(): T[] {
         return this.items;
     }
 
-    fetchSingleItem(index: number): T | null {
+    addItem(item: T): void {
+        this.items.push(item);
+    }
+
+    deleteItem(index: number): void {
         if (index >= 0 && index < this.items.length) {
-            return this.items[index];
+            this.items.splice(index, 1);
         }
-        return null;
+    }
+
+    updateItem(index: number, item: T): void {
+        if (index >= 0 && index < this.items.length) {
+            this.items[index] = item;
+        }
+    }
+
+    clear(): void {
+        this.items = [];
     }
 }

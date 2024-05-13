@@ -1,11 +1,9 @@
-import { LocalStorageItemStorage } from './LocalStorageItemStorage';
+import { LocalStorageItemStorage } from './LocalStorage';
 import fsrs, { generateCardData } from "../fsrs"
 
 import { QuestionType, CardData } from "../types";
 
-let storageModule = LocalStorageItemStorage;
-
-export const Store = storageModule;
+export const Store = LocalStorageItemStorage;
 
 export function sortCardsForLearning(cardDataArray: CardData[]): CardData[] {
     return cardDataArray.sort((a, b) => {

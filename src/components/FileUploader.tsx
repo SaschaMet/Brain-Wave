@@ -6,6 +6,7 @@ import { Store } from "../Store"
 
 const FileUpload = () => {
     const questionStore = new Store('questions');
+    const cardStore = new Store('cards');
 
     const [selectedFile, setSelectedFile] = useState(null);
     const [showModal, setShowModal] = useState<boolean>(false);
@@ -14,15 +15,15 @@ const FileUpload = () => {
     const createQuestions = (jsonData: any) => {
         try {
             if (!jsonData) throw new Error('No data found in file. Aborting...');
-               
+
             jsonData.forEach((item: QuestionType) => {
                 if (!item.questionText || !item.correctAnswer) {
                     alert('Please enter valid json data. Aborting...');
                     throw new Error('Invalid data found in file. Aborting...');
                 }
             });
-    
-            let counter = jsonData.length;
+
+            let counter = 0;
             const newQuestions = jsonData.map((item: any) => {
                 return {
                     id: counter++,
@@ -35,17 +36,30 @@ const FileUpload = () => {
                     categories: item.categories || [],
                 }
             })
-    
+
             return newQuestions as QuestionType[];
         } catch (error) {
             console.error(error);
-            setToastMessage({                
+            setToastMessage({
                 message: "Error uploading file. Please check console for more details.",
                 type: 'error',
             });
             return null;
         }
     }
+
+    const downloadItemAsJSON = () => {
+        const stores = [questionStore, cardStore];
+        stores.forEach((store) => {
+            const items = store.fetchAllItems();
+            const dataStr = JSON.stringify(items, null, 2);
+            const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(dataStr)}`;
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', store.storageKey + '.json');
+            linkElement.click();
+        });
+    };
 
     const handleFileChange = (event: any) => {
         setSelectedFile(event.target.files[0]);
@@ -60,9 +74,9 @@ const FileUpload = () => {
                     const fileContent = reader.result as any;
                     const jsonData = JSON.parse(fileContent);
                     const newQuestions = createQuestions(jsonData);
-                    if (newQuestions) {                        
-                        localStorage.removeItem('cards');
-                        await questionStore.storeMultipleItems(newQuestions);
+                    if (newQuestions) {
+                        cardStore.clear();
+                        await questionStore.replaceItems(newQuestions);
                         setToastMessage({
                             message: "Questions uploaded successfully.",
                             type: 'success',
@@ -79,23 +93,6 @@ const FileUpload = () => {
         }
     };
 
-
-    const downloadLocalStorageItemAsJSON = () => {
-        const itemName = 'questions';
-        const item = localStorage.getItem(itemName);
-        if (!item) {
-            console.log(`Item '${itemName}' not found in local storage.`);
-            return;
-        }
-        const jsonData = JSON.parse(item);
-        const dataStr = JSON.stringify(jsonData, null, 2);
-        const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(dataStr)}`;
-        const linkElement = document.createElement('a');
-        linkElement.setAttribute('href', dataUri);
-        linkElement.setAttribute('download', 'questions.json');
-        linkElement.click();
-    };
-
     useEffect(() => {
         setTimeout(() => {
             setToastMessage(null);
@@ -103,7 +100,7 @@ const FileUpload = () => {
     }, [toastMessage]);
 
     return (
-        <>  
+        <>
             <p className='h5 pb-3' >Upload / Download Questions</p>
             <div className="row align-items-center">
                 <div className="col-auto">
@@ -117,12 +114,12 @@ const FileUpload = () => {
                         You can find a sample input file <a href="https://github.com/SaschaMet/Brain-Wave/blob/3f4bd383a6de66d59f63b7813bd04a8f65007ca2/__mock__/questions.json" target="_blank" rel="noreferrer">here</a>.
                     </span>
                 </div>
-                <div className="col-12 mt-4">
-                    <button className='btn btn-outline-secondary btn-sm' onClick={downloadLocalStorageItemAsJSON}>Download questions</button>
-                </div>
-            </div>   
+            </div>
+            <div className="col-12 mt-4">
+                <button className='btn btn-outline-secondary btn-sm' onClick={downloadItemAsJSON}>Download questions</button>
+            </div>
             {toastMessage && <ToastMessage message={toastMessage.message} type={toastMessage.type} />}
-            {showModal && <Modal title='Upload Question' message='Are you sure you want to upload this file? This will overwrite your current questions and reset your learning process.' confirmAction={handleUpload} cancelAction={() => setShowModal(false)}  />}           
+            {showModal && <Modal title='Upload Question' message='Are you sure you want to upload this file? This will overwrite your current questions and reset your learning process.' confirmAction={handleUpload} cancelAction={() => setShowModal(false)} />}
         </>
     );
 };

@@ -19,7 +19,6 @@ const hasEmptyElements = (arr: string[]) => {
 }
 
 
-
 const AddEditQuestion = (props: AddEditQuestionProps) => {
 
     const { question, index, isNewQuestion, uniqueCategories, addOption, updateQuestion, deleteQuestion } = props;
@@ -59,8 +58,15 @@ const AddEditQuestion = (props: AddEditQuestionProps) => {
                 lastOptionInput.focus();
             }, 350);
         }
-
     }, [isMultipleChoice, updatedQuestion, addOption, index]);
+
+    useEffect(() => {
+        const questionText = document.getElementById(`question-${index}-text`);
+        if (questionText) {
+            questionText.focus();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <div className='row' id={`accordion-element-${index}`}>
@@ -114,7 +120,7 @@ const AddEditQuestion = (props: AddEditQuestionProps) => {
 
                 {isNewQuestion && !isMultipleChoice && (
                     <div>
-                        <textarea className="form-control" rows={2} name={`answer-${index}`} id={`question-${index}-answer`} defaultValue={updatedQuestion.correctAnswer[0]} placeholder='The answer to the question is ...' />
+                        <textarea className="form-control" rows={5} name={`answer-${index}`} id={`question-${index}-answer`} defaultValue={updatedQuestion.correctAnswer[0]} placeholder='The answer to the question is ...' />
                     </div>
                 )}
                 <br />
@@ -137,38 +143,41 @@ const AddEditQuestion = (props: AddEditQuestionProps) => {
                     <input className="form-control image-url" key="image-url-explanation" id="image-url-explanation" type="text" placeholder="https://www.image-url.com" defaultValue={updatedQuestion.imageUrlExplanation} />
                 </div>
                 <div className='my-3 pt-2 row'>
-                    {updatedQuestion.categories && updatedQuestion.categories.length > 0 && (
-                        <>
-                            <div className='col-12 col-md-6'>
-                                <p className='text-muted text-small pb-0 mb-0'>Categories</p>
-                                {updatedQuestion.categories.map((category, categoryIndex) => (
-                                    <div className="option-wrapper d-flex justify-content-between align-content-between flex-wrap mb-1" key={`${category}-${categoryIndex}`} >
-                                        <div className='col'>
-                                            <input type='text' className="form-control question-category" defaultValue={category} />
-                                        </div>
-                                        <div className='col'>
-                                            <button type="button" className="btn btn-outline-danger btn-sm ms-2 text-start" onClick={() => deleteCategory(category)}>
-                                                ❌
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
+                    <div className='col-12 col-md-6'>
+                        <p className='text-muted text-small pb-0 mb-0'>Categories</p>
+                        {updatedQuestion.categories.map((category, categoryIndex) => (
+                            <div className="option-wrapper d-flex justify-content-between align-content-between flex-wrap mb-1" key={`${category}-${categoryIndex}`} >
+                                <div className='col'>
+                                    <input type='text' className="form-control question-category" defaultValue={category} />
+                                </div>
+                                <div className='col'>
+                                    <button type="button" className="btn btn-outline-danger btn-sm ms-2 text-start" onClick={() => deleteCategory(category)}>
+                                        ❌
+                                    </button>
+                                </div>
                             </div>
+                        ))}
+                        {updatedQuestion.categories.length === 0 && (
+                            <div className="option-wrapper d-flex justify-content-between align-content-between flex-wrap mb-1" >
+                                <div className='col'>
+                                    <input type='text' className="form-control question-category" placeholder='category ...' />
+                                </div>
+                            </div>
+                        )}
+                    </div>
 
-                            <div className='col-12 col-md-6'>
-                                <div>
-                                    <p>Quickly Add Existing Categories:</p>
-                                </div>
-                                <div>
-                                    {uniqueCategories?.map((category, categoryIndex) => (
-                                        <span className="badge rounded-pill text-bg-secondary m-1 add-existing-category" key={`category-badge-${categoryIndex}`} onClick={() => addExistingCategory(category)} >
-                                            {category}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-                        </>
-                    )}
+                    <div className='col-12 col-md-6'>
+                        <div>
+                            <p>Quickly Add Existing Categories:</p>
+                        </div>
+                        <div>
+                            {uniqueCategories?.map((category, categoryIndex) => (
+                                <span className="badge rounded-pill text-bg-secondary m-1 add-existing-category" key={`category-badge-${categoryIndex}`} onClick={() => addExistingCategory(category)} >
+                                    {category}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
 
                     <div className='col-12'>
                         <button type="button" className="btn btn-outline-secondary btn-sm mt-3" onClick={() => addExistingCategory('')}>
@@ -178,7 +187,7 @@ const AddEditQuestion = (props: AddEditQuestionProps) => {
                 </div>
             </div>
 
-            <div className='mt-4 col-12 col-sm-6'>
+            <div className={`mt-4 col-12 col-sm-6 text-end ${!(!isNewQuestion && deleteQuestion) && "col-sm-12"}`}>
                 <button type="button" className="btn btn-success btn-sm" onClick={(e) => updateQuestion(e, index)}>
                     {isNewQuestion ? "Add New" : "Update"} Question
                 </button>

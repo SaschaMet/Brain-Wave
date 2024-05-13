@@ -84,10 +84,12 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
         }
     }, [flipped])
 
+
+
     return (
         <>
-            <div className={`card question-card ${flipped ? 'flipped' : ''} shadow border-0 p-3 w-100 m-auto`}  >
-                <div className={`card-front card-body row p-3 ${flipped ? 'hidden' : ''}`}>
+            <div className={`card question-card ${flipped ? 'flipped' : ''} shadow py-3 w-100 m-auto`}  >
+                <div className={`card-front card-body row py-3 ${flipped ? 'hidden' : ''}`}>
                     <h5 className="card-title col-12 d-flex justify-content-center align-items-center">{question.questionText}</h5>
 
                     {question.imageUrlQuestion && (
@@ -132,7 +134,7 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
                     ))}
 
                     {!question.options && (
-                        <textarea className="form-control bg-white show-answer-correctAnswer" disabled rows={12} name={`answer-${question.id}`} id={`question-${question.id}-answer`} defaultValue={question.correctAnswer[0]} placeholder='The answer to the question is ...' />
+                        <textarea className="form-control show-answer-correctAnswer" disabled rows={6} name={`answer-${question.id}`} id={`question-${question.id}-answer`} defaultValue={question.correctAnswer[0]} placeholder='The answer to the question is ...' />
                     )}
 
                     {showNextQuestionButton && question.explanation && (

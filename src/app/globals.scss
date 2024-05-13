@@ -1,8 +1,14 @@
 /* import import 'bootstrap/dist/css/bootstrap.min.css'; */
 @import '~bootstrap/scss/bootstrap.scss';
 
+.btn-outline-secondary {
+    color: #d7a28f;
+    border-color: #d7a28f;
+
+}
+
 a {
-    color: rgb(63, 63, 63)
+    color: #d7a28f
 }
 
 a:hover {
@@ -21,7 +27,7 @@ a:hover {
 }
 
 .modal-content {
-    background-color: whitesmoke;
+    background-color: rgb(185, 110, 110);
 }
 
 button, input {
@@ -57,12 +63,12 @@ button.navbar-toggler {
 .accordion-item {
     margin-bottom: 1rem;
     border-radius: .25rem;
-    border: 1px solid rgba(0,0,0,.125) !important;
+    border: 1px solid var(--bs-secondary-color) !important;
 }
 
 .accordion-button {
     border: none !important;
-    color: black !important;
+    color: var(--bs-secondary-color) !important;
     box-shadow: none !important;
     background-color: inherit !important;
     font-size: 1.05rem;
@@ -94,8 +100,9 @@ button.navbar-toggler {
     transform-style: preserve-3d;
     transition: transform 0.6s;
     width: 100%;
-    min-height: 60vh;
+    min-height: 30vh;
     overflow: auto;
+    border-color: whitesmoke;
 }
 
 @media (min-width: 600px) {
@@ -114,8 +121,13 @@ button.navbar-toggler {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
     height: 100%;
+}
+
+@media (min-width: 600px) {
+    .question-card .card-front {
+      width: 100%;
+    }
 }
 
 .question-card .card-front {

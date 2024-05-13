@@ -102,6 +102,7 @@ const CreateNewQuestion = () => {
             if (categoryElements?.length) {
                 categories = Array.from(categoryElements).map((category) => category.value.trim());
                 categories = Array.from(new Set(categories));
+                categories = categories.filter((category) => category !== '');
             }
 
             const updatedQuestion = {
@@ -159,8 +160,8 @@ const CreateNewQuestion = () => {
                 }
             }
 
-            questions.push(updatedQuestion);
-            questionStore.replaceItems(questions);
+            // questions.push(updatedQuestion);
+            questionStore.addItem(updatedQuestion);
 
             setLoading(true);
             setTimeout(() => {

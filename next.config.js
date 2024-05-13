@@ -1,13 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    env: {
-        pro: "false",
-    },
+    reactStrictMode: true,
+    output: "standalone",
     images: {
         remotePatterns: [
             {
                 hostname: '**',
-              },
+            },
         ]
     }
 }

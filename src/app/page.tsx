@@ -21,20 +21,16 @@ export default function Home() {
 
     const [showFilters, setShowFilters] = useState(false)
 
-    const updateCards = (questionId: number, correctlyAnswered: boolean) => {
+    const giveFeedback = (questionId: number, correctlyAnswered: boolean) => {
         if (cards) {
             const card = cards.find(card => card.id === questionId)
-
-            if (!card) return
+            if (!card) {
+                console.error("No card found for question with id " + questionId)
+                return
+            }
             card.grade = correctlyAnswered ? 1 : 0
-
-            let newCards = [...cards]
             const newCard = fsrs(card)
-
-            newCards = newCards.filter(card => card.id !== questionId)
-            newCards.push(newCard)
-            newCards = sortCardsForLearning(newCards)
-            cardStore.replaceItems(newCards)
+            cardStore.updateItem(cards.indexOf(card), newCard)
         }
     }
 
@@ -98,7 +94,7 @@ export default function Home() {
         } else {
             await setFilteredCards(cards)
         }
-        
+
         setCurrentCardIndex(0)
     }
 
@@ -110,7 +106,7 @@ export default function Home() {
                     return question.categories?.includes(filter)
                 }
             }).map(n => n)
-    
+
             if (filteredQuestions.length === 0) {
                 alert("No questions found for filter")
                 return
@@ -177,9 +173,9 @@ export default function Home() {
                             <>
                                 <Question
                                     question={getNextCard()}
-                                    giveFeedback={updateCards}
+                                    giveFeedback={giveFeedback}
                                     changeQuestion={changeQuestion}
-                                />                                
+                                />
                             </>
                         )}
                         <div className="form-check form-switch mt-3">
@@ -192,11 +188,11 @@ export default function Home() {
                                     <label className="mb-1 text-muted">Filter By Difficulty:</label>
                                     <div className="choices">
                                         <div className="choices__inner">
-                                            <select className="form-select" aria-label="Default select example" onChange={(e) => filterCards(e, FilterEntity.difficulty)}>                                                        
+                                            <select className="form-select" aria-label="Default select example" onChange={(e) => filterCards(e, FilterEntity.difficulty)}>
                                                 <option value="medium">Medium</option>
                                                 <option value="easy">Easy</option>
                                                 <option value="hard">Hard</option>
-                                            </select>                                               
+                                            </select>
                                         </div>
                                     </div>
                                     <p className="pt-3 fw-lighter" style={{ fontSize: "0.75rem" }}>
@@ -208,7 +204,7 @@ export default function Home() {
                             {categories && categories.length > 0 && (
                                 <div className="col-12 col-sm-4 mt-5" >
                                     <div className="form-border-transparent form-fs-lg bg-light rounded-3 h-100 p-3">
-                                    <label className="mb-1 text-muted">Filter By Category:</label>
+                                        <label className="mb-1 text-muted">Filter By Category:</label>
                                         <div className="choices">
                                             <div className="choices__inner">
                                                 <select className="form-select" aria-label="Default select example" onChange={(e) => filterCards(e, FilterEntity.category)}>
@@ -216,13 +212,13 @@ export default function Home() {
                                                     {categories?.map(category => (
                                                         <option key={category} value={category}>{category}</option>
                                                     ))}
-                                                </select>                                               
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             )}
-                        </div> 
+                        </div>
                     </main>
                 </div>
             </div>

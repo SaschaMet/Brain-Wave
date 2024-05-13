@@ -18,6 +18,8 @@
 # misc
 .DS_Store
 *.pem
+*.env
+/public/questions
 
 # debug
 npm-debug.log*
@@ -33,3 +35,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+createQuizQuestions.ipynb
+createQECA-Notes.ipynb

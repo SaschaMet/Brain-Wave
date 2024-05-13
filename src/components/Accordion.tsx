@@ -22,7 +22,7 @@ export const AccordionItem = ({ title, isActive, onToggle, children }: Accordion
                 {title}
             </button>
         </h2>
-        <div className="accordion-collapse" style={isActive ? { display: 'block' } : {display: 'none'}}>
+        <div className="accordion-collapse" style={isActive ? { display: 'block' } : { display: 'none' }}>
             <div className="accordion-body">
                 {children}
             </div>
@@ -33,7 +33,7 @@ export const AccordionItem = ({ title, isActive, onToggle, children }: Accordion
 export const Accordion = ({ children }: AccordionProps) => {
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
-    const handleToggle = (e: React.MouseEvent<HTMLButtonElement>, index: number | null) => {        
+    const handleToggle = (e: React.MouseEvent<HTMLButtonElement>, index: number | null) => {
         setActiveIndex(index === activeIndex ? null : index);
         setTimeout(() => {
             if (index !== null) {
@@ -44,7 +44,7 @@ export const Accordion = ({ children }: AccordionProps) => {
     };
 
     return (
-        <div className="accordion">
+        <div className="accordion" data-bs-theme="dark">
             {React.Children.map(children, (child: React.ReactElement, index: number) =>
                 React.cloneElement(child, {
                     isActive: index === activeIndex,
