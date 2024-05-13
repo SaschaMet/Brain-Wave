@@ -69,8 +69,10 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
             showMultipleChoiceAnswers()
         } else {
             setFlipped(!flipped);
-            setShowCorrectAnswer(true)
             setShowNextQuestionButton(true)
+            setTimeout(() => {
+                setShowCorrectAnswer(true)
+            }, 150);
         }
     }
 
@@ -85,10 +87,9 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
     }, [flipped])
 
 
-
     return (
         <>
-            <div className={`card question-card ${flipped ? 'flipped' : ''} shadow py-3 w-100 m-auto`}  >
+            <div className={`card question-card ${flipped ? 'flipped' : ''} shadow py-3 m-auto`}  >
                 <div className={`card-front card-body row py-3 ${flipped ? 'hidden' : ''}`}>
                     <h5 className="card-title col-12 d-flex justify-content-center align-items-center">{question.questionText}</h5>
 
@@ -115,17 +116,17 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
                     )}
 
                     {!showNextQuestionButton && (
-                        <button type="button" className="btn btn-sm btn-outline-secondary text-center m-auto col-auto" onClick={showAnswer}>Show Answer</button>
+                        <button type="button" className="btn btn-sm btn-outline-secondary text-center m-auto col-auto mt-5" onClick={showAnswer}>Show Answer</button>
                     )}
 
                     {showNextQuestionButton && question.options?.length && (
-                        <button type="button" className="btn btn-sm btn-outline-secondary text-center m-auto col-auto" onClick={nextQuestion}>Next Question 👉</button>
+                        <button type="button" className="btn btn-sm btn-outline-secondary text-center m-auto col-auto mt-4 mt-sm-2" onClick={nextQuestion}>Next Question 👉</button>
                     )}
 
                 </div>
-                <div className={`card-back card-body row align-content-center p-3 ${showBack ? '' : 'hidden'}`}>
+                <div className={`card-back card-body row ${showBack ? '' : 'hidden'}`}>
 
-                    <h5 className="card-title col-12 d-flex justify-content-center align-items-center">{question.questionText}</h5>
+                    <h5 className="card-title ms-2">{question.questionText}</h5>
                     <br />
                     <br />
 
@@ -158,11 +159,11 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
                     )}
                 </div>
             </div>
-            {!question.options && showCorrectAnswer && (
-                <div className="col-12 border p-3 mt-4 rounded d-sm-flex align-items-center justify-content-evenly text-center">
-                    <p className="m-0 h5"> Was your answer correct? </p>
+            {showCorrectAnswer && (
+                <div className="col-12 border py-3 mt-4 rounded d-flex align-items-center justify-content-evenly text-center">
+                    <p className="m-0 h5 pb-3"> Was your answer correct? </p>
                     <div>
-                        <button type="button" onClick={() => answerOpenEndedQuestion(true)} className="btn btn-sm btn-success m-auto col-auto mx-3">Yes 👍</button>
+                        <button type="button" onClick={() => answerOpenEndedQuestion(true)} className="btn btn-sm btn-success m-auto col-auto mx-3 mt-2 mb-5 mb-sm-0 mt-sm-0">Yes 👍</button>
                         <button type="button" onClick={() => answerOpenEndedQuestion(false)} className="btn btn-sm btn-danger m-auto col-auto mx-3">No 👎</button>
                     </div>
                 </div>

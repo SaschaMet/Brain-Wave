@@ -178,10 +178,10 @@ export default function Home() {
                                 />
                             </>
                         )}
-                        <div className="form-check form-switch mt-3">
+                        {/* <div className="form-check form-switch mt-3">
                             <input className="form-check-input switch-input" type="checkbox" role="switch" id="showFilterSwitch" defaultChecked={showFilters} onChange={() => setShowFilters(!showFilters)} />
                             <label className="form-check-label text-small" htmlFor="showFilterSwitch">Filter questions</label>
-                        </div>
+                        </div> */}
                         <div className={`row justify-content-center ${showFilters ? '' : 'collapse'}`}>
                             <div className="col-12 col-sm-4 mt-5" >
                                 <div className="form-border-transparent form-fs-lg bg-light rounded-3 h-100 p-3">
