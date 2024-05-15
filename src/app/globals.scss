@@ -7,6 +7,15 @@
 
 }
 
+pre {
+    font-size: inherit;
+    color: inherit;
+    border: initial;
+    padding: initial;
+    font-family: inherit;
+    text-wrap: balance;
+}
+
 a {
     color: #d7a28f
 }
@@ -158,4 +167,14 @@ button.navbar-toggler {
 
 .add-existing-category {
     cursor: pointer;
+}
+
+.question-explanation {
+    padding-left: 9vw;
+}
+
+@media (min-width: 900px) {
+    .question-explanation {
+        padding-left: 1vw;
+    }
 }

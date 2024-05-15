@@ -139,10 +139,12 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
                     )}
 
                     {showNextQuestionButton && question.explanation && (
-                        <div className="col-12">
-                            <p className="pb-0 mb-0 text-break">
+                        <div className="col-12 question-explanation">
+                            <p className="pb-0 mb-0 mt-3 text-break">
                                 <span className="text-muted" >Explanation:</span><br />
-                                {question.explanation}
+                                <pre>
+                                    {question.explanation}
+                                </pre>
                             </p>
                         </div>
                     )}
