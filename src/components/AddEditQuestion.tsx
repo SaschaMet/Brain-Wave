@@ -55,7 +55,7 @@ const AddEditQuestion = (props: AddEditQuestionProps) => {
             setTimeout(() => {
                 const optionInputs = document.querySelectorAll('input.question-text');
                 const lastOptionInput = optionInputs[optionInputs.length - 1] as HTMLInputElement;
-                lastOptionInput.focus();
+                lastOptionInput && lastOptionInput.focus();
             }, 350);
         }
     }, [isMultipleChoice, updatedQuestion, addOption, index]);

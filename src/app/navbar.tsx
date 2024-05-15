@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from 'react';
-import { cloudSync } from "../cloudSync";
+
 
 const Navbar = () => {
     const [isNavbarOpen, setIsNavbarOpen] = useState(false);
@@ -29,9 +29,6 @@ const Navbar = () => {
 
                     </ul>
                     <a href="/insert" className="btn btn-outline-secondary ms-1 ms-md-0">Add New Question</a>
-                    {process.env.NEXT_PUBLIC_ISPRO && (
-                        <button className="btn btn-outline-secondary ms-1 ms-md-3" onClick={() => cloudSync()} >☁️</button>
-                    )}
                 </div>
             </div>
         </nav>

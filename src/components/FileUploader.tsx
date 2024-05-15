@@ -2,6 +2,7 @@ import { QuestionType, ToastMessageProps } from '../types';
 import React, { useEffect, useState } from 'react';
 import { ToastMessage } from './ToastMessage';
 import Modal from './Modal';
+import { cloudSync } from "../cloudSync";
 import { Store } from "../Store"
 
 const FileUpload = () => {
@@ -68,17 +69,45 @@ const FileUpload = () => {
     const handleUpload = async () => {
         try {
             await questionStore.setup();
+            await cardStore.setup();
             if (selectedFile) {
                 const reader = new FileReader();
                 reader.onload = async () => {
-                    const fileContent = reader.result as any;
-                    const jsonData = JSON.parse(fileContent);
-                    const newQuestions = createQuestions(jsonData);
-                    if (newQuestions) {
-                        cardStore.clear();
-                        await questionStore.replaceItems(newQuestions);
+                    const file = selectedFile as any;
+                    const name = file!.name!;
+
+                    if (!name.includes('json')) {
                         setToastMessage({
-                            message: "Questions uploaded successfully.",
+                            message: "Invalid file type. Please upload a JSON file.",
+                            type: 'error',
+                        });
+                        return;
+                    }
+
+                    if (name.includes('questions')) {
+                        const fileContent = reader.result as any;
+                        const jsonData = JSON.parse(fileContent);
+                        const newQuestions = createQuestions(jsonData);
+                        if (newQuestions) {
+                            cardStore.clear();
+                            await questionStore.replaceItems(newQuestions);
+                            setToastMessage({
+                                message: "Questions uploaded successfully.",
+                                type: 'success',
+                            });
+                            setShowModal(false);
+                            const fileInput = document.getElementById('file-input') as HTMLInputElement;
+                            fileInput.value = '';
+                        }
+                    }
+
+                    if (name.includes('cards')) {
+                        const fileContent = reader.result as any;
+                        const jsonData = JSON.parse(fileContent);
+                        cardStore.clear();
+                        await cardStore.replaceItems(jsonData);
+                        setToastMessage({
+                            message: "Progress data uploaded successfully.",
                             type: 'success',
                         });
                         setShowModal(false);
@@ -99,6 +128,13 @@ const FileUpload = () => {
         }, 5000);
     }, [toastMessage]);
 
+    useEffect(() => {
+        if (selectedFile) {
+            const file = selectedFile as any;
+            console.log({ file, name: file!.name! })
+        }
+    }, [selectedFile]);
+
     return (
         <>
             <p className='h5 pb-3' >Upload / Download Questions</p>
@@ -107,7 +143,7 @@ const FileUpload = () => {
                     <input type="file" id="file-input" className="form-control" onChange={handleFileChange} />
                 </div>
                 <div className="col-auto">
-                    <button className='btn btn-outline-secondary btn-sm' disabled={selectedFile ? false : true} onClick={() => setShowModal(true)}>Upload question file</button>
+                    <button className='btn btn-outline-secondary btn-sm my-4 my-sm-0' disabled={selectedFile ? false : true} onClick={() => setShowModal(true)}>Upload file</button>
                 </div>
                 <div className="col-auto">
                     <span className="form-text">
@@ -115,9 +151,14 @@ const FileUpload = () => {
                     </span>
                 </div>
             </div>
-            <div className="col-12 mt-4">
-                <button className='btn btn-outline-secondary btn-sm' onClick={downloadItemAsJSON}>Download questions</button>
+            <div className="col-auto mt-4">
+                <button className='btn btn-outline-secondary btn-sm' onClick={downloadItemAsJSON}>Download questions and progress data</button>
             </div>
+            {process.env.NEXT_PUBLIC_ISPRO && (
+                <div className="col-auto mt-4 mb-5">
+                    <button className="btn btn-outline-secondary" onClick={() => cloudSync()} >☁️ Cloud sync</button>
+                </div>
+            )}
             {toastMessage && <ToastMessage message={toastMessage.message} type={toastMessage.type} />}
             {showModal && <Modal title='Upload Question' message='Are you sure you want to upload this file? This will overwrite your current questions and reset your learning process.' confirmAction={handleUpload} cancelAction={() => setShowModal(false)} />}
         </>
