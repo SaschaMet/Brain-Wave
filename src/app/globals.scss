@@ -14,6 +14,9 @@ pre {
     padding: initial;
     font-family: inherit;
     text-wrap: balance;
+    @supports not (text-wrap: balance) {
+        text-wrap: wrap;
+    }
 }
 
 a {

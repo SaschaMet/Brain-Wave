@@ -20,18 +20,19 @@ export default function Home() {
     const [currentCardIndex, setCurrentCardIndex] = useState<number | null>(null)
 
     const [showFilters, setShowFilters] = useState(false)
+    const [showRandomOrder, setShowRandomOrder] = useState(false)
+
+    const [currentQuestion, setCurrentQuestion] = useState<QuestionType | null>(null)
 
     const giveFeedback = (questionId: number, correctlyAnswered: boolean) => {
-        if (cards) {
-            const card = cards.find(card => card.id === questionId)
-            if (!card) {
-                console.error("No card found for question with id " + questionId)
-                return
-            }
-            card.grade = correctlyAnswered ? 1 : 0
-            const newCard = fsrs(card)
-            cardStore.updateItem(cards.indexOf(card), newCard)
+        const card = cards!.find(card => card.id === questionId)
+        if (!card) {
+            console.error("No card found for question with id " + questionId)
+            return
         }
+        card.grade = correctlyAnswered ? 1 : 0
+        const newCard = fsrs(card)
+        cardStore.updateItem(cards!.indexOf(card), newCard)
     }
 
     const changeQuestion = () => {
@@ -53,14 +54,23 @@ export default function Home() {
         }, 350);
     }
 
-    const getNextCard = (): QuestionType => {
-        const nextCard = filteredCards![currentCardIndex!]
+    const getNextCard = () => {
+
+        let nextCard = null as CardData | null
+        if (showRandomOrder) {
+            const tenPercent = Math.floor(filteredCards!.length / 10)
+            const firstTenPercent = filteredCards!.slice(0, tenPercent)
+            nextCard = firstTenPercent[Math.floor(Math.random() * firstTenPercent.length)]
+        } else {
+            nextCard = filteredCards![currentCardIndex!]
+        }
+
         // get the question with the id of the card
-        const question = questions!.find(question => question.id === nextCard.id)
+        const question = questions!.find(question => question.id === nextCard!.id)
 
         if (!question) {
-            console.error("No question found for card with id " + nextCard.id)
-            throw new Error("No question found for card with id " + nextCard.id)
+            console.error("No question found for card with id " + nextCard!.id)
+            throw new Error("No question found for card with id " + nextCard!.id)
         }
 
         // randomize the order of the options
@@ -68,7 +78,7 @@ export default function Home() {
             question.options = question.options.sort(() => Math.random() - 0.5)
         }
 
-        return question
+        setCurrentQuestion(question)
     }
 
     const setup = async () => {
@@ -92,7 +102,7 @@ export default function Home() {
             await cardStore.replaceItems(newCards)
             await setFilteredCards(newCards)
         } else {
-            await setFilteredCards(cards)
+            await setFilteredCards(sortCardsForLearning(cards))
         }
 
         setCurrentCardIndex(0)
@@ -153,7 +163,22 @@ export default function Home() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    useEffect(() => {
+        if (currentCardIndex !== null && filteredCards) {
+            getNextCard()
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentCardIndex, filteredCards])
+
     const categories = questions?.map(question => question.categories).flat().filter((v, i, a) => a.indexOf(v) === i).filter(n => n)
+
+    if (!currentQuestion) {
+        return (
+            <div className="col-12 mx-auto p-4 py-md-5">
+                <LoadingSpinner />
+            </div>
+        )
+    }
 
     return (
         <div className="container-xl">
@@ -172,19 +197,23 @@ export default function Home() {
                         {Boolean(questions?.length && cards?.length && filteredCards?.length && currentCardIndex !== null) && (
                             <>
                                 <Question
-                                    question={getNextCard()}
+                                    question={currentQuestion}
                                     giveFeedback={giveFeedback}
                                     changeQuestion={changeQuestion}
                                 />
                             </>
                         )}
-                        {/* <div className="form-check form-switch mt-3">
+                        <div className="form-check form-switch mt-3">
+                            <input className="form-check-input switch-input" type="checkbox" role="switch" id="showRandomOrder" defaultChecked={showRandomOrder} onChange={() => setShowRandomOrder(!showRandomOrder)} />
+                            <label className="form-check-label text-small" htmlFor="showRandomOrder">Random Order</label>
+                        </div>
+                        <div className="form-check form-switch mt-3">
                             <input className="form-check-input switch-input" type="checkbox" role="switch" id="showFilterSwitch" defaultChecked={showFilters} onChange={() => setShowFilters(!showFilters)} />
                             <label className="form-check-label text-small" htmlFor="showFilterSwitch">Filter questions</label>
-                        </div> */}
+                        </div>
                         <div className={`row justify-content-center ${showFilters ? '' : 'collapse'}`}>
                             <div className="col-12 col-sm-4 mt-5" >
-                                <div className="form-border-transparent form-fs-lg bg-light rounded-3 h-100 p-3">
+                                <div className="form-border-transparent form-fs-lg rounded-3 h-100 p-3">
                                     <label className="mb-1 text-muted">Filter By Difficulty:</label>
                                     <div className="choices">
                                         <div className="choices__inner">
@@ -203,7 +232,7 @@ export default function Home() {
 
                             {categories && categories.length > 0 && (
                                 <div className="col-12 col-sm-4 mt-5" >
-                                    <div className="form-border-transparent form-fs-lg bg-light rounded-3 h-100 p-3">
+                                    <div className="form-border-transparent form-fs-lg rounded-3 h-100 p-3">
                                         <label className="mb-1 text-muted">Filter By Category:</label>
                                         <div className="choices">
                                             <div className="choices__inner">

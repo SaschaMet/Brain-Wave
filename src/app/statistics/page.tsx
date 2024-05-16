@@ -62,7 +62,7 @@ const generateChartData = (statistics: StatisticsType) => {
                     'rgba(41, 164, 41, 0.8)',
                     'rgba(255, 0, 0, 0.8)',
                     'rgba(63, 63, 63, 0.6)'
-                ],        
+                ],
                 borderWidth: 0,
             },
         ],
@@ -99,15 +99,13 @@ export default function StatisticsPage() {
         return <LoadingSpinner />
     }
 
-    const data = generateChartData(statistics)
-
     return (
         <div className="container">
-            <h1>Statistics</h1>       
+            <h1>Statistics</h1>
             <div className="row">
                 <div className="row col-12 col-lg-7">
                     <div className="mt-5 chart">
-                        <Pie data={data} />
+                        <Pie data={generateChartData(statistics)} />
                     </div>
                 </div>
                 <div className="row col-12 col-lg-5">
@@ -118,7 +116,7 @@ export default function StatisticsPage() {
                         <figcaption className="blockquote-footer">
                             Total number of questions
                         </figcaption>
-                    </figure> 
+                    </figure>
                     <figure className="col-12">
                         <blockquote className="ps-2 blockquote">
                             <p>{statistics.numberOfIncorrectAnswers}</p>
@@ -151,7 +149,7 @@ export default function StatisticsPage() {
                             Number of questions not yet answered at least one time correctly
                         </figcaption>
                     </figure>
-                </div>            
+                </div>
             </div>
         </div>
     );
