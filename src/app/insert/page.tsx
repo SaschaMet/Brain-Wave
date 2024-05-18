@@ -210,7 +210,7 @@ const CreateNewQuestion = () => {
 
 
     return (
-        <div className='container pt-5'>
+        <div className='container pt-sm-5'>
             {loading ?
                 <LoadingSpinner /> :
                 <>

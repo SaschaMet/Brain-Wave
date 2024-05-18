@@ -10,8 +10,14 @@ const Navbar = () => {
     };
 
     return (
-        <nav className={`navbar navbar-expand-md ${isNavbarOpen ? 'navbar-open' : ''}`}>
+        <nav className={`navbar navbar-expand-md ${isNavbarOpen ? 'navbar-open' : ''} mb-3 mb-sm-0`}>
             <div className="container-xl">
+                <a href='/' title='home' className='no-underline navbar-back-link'>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-arrow-left" viewBox="0 0 16 16">
+                        <path fillRule="evenodd" d="M6.354 11.354a.5.5 0 0 1 0-.708L2.707 8l3.647-3.646a.5.5 0 0 1 .708.708L4.707 8l2.645 2.646a.5.5 0 0 1-.708.708z" />
+                        <path fillRule="evenodd" d="M2.5 8a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1h-10a.5.5 0 0 1-.5-.5z" />
+                    </svg>
+                </a>
                 <button className="navbar-toggler" type="button" onClick={toggleNavbar}>
                     <span className="navbar-toggler-icon"></span>
                 </button>

@@ -126,16 +126,22 @@ export default function Question({ question, giveFeedback, changeQuestion }: { q
                 </div>
                 <div className={`card-back card-body row ${showBack ? '' : 'hidden'}`}>
 
-                    <h5 className="card-title ms-2">{question.questionText}</h5>
+                    <h5 className="card-title ms-2 text-center">{question.questionText}</h5>
                     <br />
                     <br />
 
                     {question.options && question.correctAnswer.map(answer => (
-                        <p key={answer}><span className="text-muted" >Answer:</span><br />{answer}</p>
+                        <pre key={answer}><span className="text-muted" >Answer:</span><br />{answer}</pre>
                     ))}
 
-                    {!question.options && (
+                    {!question.options && !showNextQuestionButton && (
                         <textarea className="form-control show-answer-correctAnswer" disabled rows={6} name={`answer-${question.id}`} id={`question-${question.id}-answer`} defaultValue={question.correctAnswer[0]} placeholder='The answer to the question is ...' />
+                    )}
+
+                    {!question.options && showNextQuestionButton && (
+                        <pre className="show-answer-correctAnswer">
+                            {question.correctAnswer[0]}
+                        </pre>
                     )}
 
                     {showNextQuestionButton && question.explanation && (

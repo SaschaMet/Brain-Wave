@@ -13,6 +13,8 @@ export default function Home() {
     const questionStore = new Store('questions');
     const cardStore = new Store('cards');
 
+    const [loading, setLoading] = useState(true)
+
     const [questions, setQuestions] = useState<QuestionType[] | null>(null)
     const [cards, setCards] = useState<CardData[] | null>(null)
 
@@ -55,7 +57,6 @@ export default function Home() {
     }
 
     const getNextCard = () => {
-
         let nextCard = null as CardData | null
         if (showRandomOrder) {
             const tenPercent = Math.floor(filteredCards!.length / 10)
@@ -70,7 +71,7 @@ export default function Home() {
 
         if (!question) {
             console.error("No question found for card with id " + nextCard!.id)
-            throw new Error("No question found for card with id " + nextCard!.id)
+            return;
         }
 
         // randomize the order of the options
@@ -160,11 +161,14 @@ export default function Home() {
 
     useEffect(() => {
         setup()
+        setTimeout(() => {
+            setLoading(false)
+        }, 350);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
-        if (currentCardIndex !== null && filteredCards) {
+        if (currentCardIndex !== null && filteredCards && filteredCards.length > 0) {
             getNextCard()
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -172,9 +176,9 @@ export default function Home() {
 
     const categories = questions?.map(question => question.categories).flat().filter((v, i, a) => a.indexOf(v) === i).filter(n => n)
 
-    if (!currentQuestion) {
+    if (loading) {
         return (
-            <div className="col-12 mx-auto p-4 py-md-5">
+            <div className="col-12 mx-auto p-4 py-md-5 mt-5">
                 <LoadingSpinner />
             </div>
         )
@@ -183,10 +187,10 @@ export default function Home() {
     return (
         <div className="container-xl">
             <div className="row">
-                <div className="col-12 mx-auto p-4 py-md-5">
+                <div className="col-12 mx-auto py-md-5">
                     <main>
-                        {currentCardIndex === null && (<LoadingSpinner />)}
-                        {questions && questions.length === 0 && (
+                        {Boolean((currentCardIndex === null || !currentQuestion) && (questions && questions.length)) && (<LoadingSpinner />)}
+                        {((questions && questions.length === 0) || !currentQuestion) && (
                             <div className="alert alert-warning" role="alert">
                                 <h4 className="alert-heading">No questions found!</h4>
                                 <p>
@@ -194,10 +198,10 @@ export default function Home() {
                                 </p>
                             </div>
                         )}
-                        {Boolean(questions?.length && cards?.length && filteredCards?.length && currentCardIndex !== null) && (
+                        {Boolean(questions?.length && cards?.length && filteredCards?.length && currentCardIndex !== null && currentQuestion) && (
                             <>
                                 <Question
-                                    question={currentQuestion}
+                                    question={currentQuestion!}
                                     giveFeedback={giveFeedback}
                                     changeQuestion={changeQuestion}
                                 />

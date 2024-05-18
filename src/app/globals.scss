@@ -14,9 +14,11 @@ pre {
     padding: initial;
     font-family: inherit;
     text-wrap: balance;
-    @supports not (text-wrap: balance) {
-        text-wrap: wrap;
-    }
+    white-space: normal;
+    word-wrap:break-word;
+    white-space:pre-wrap;
+    overflow-wrap: initial;
+    width: 100%;
 }
 
 a {
@@ -27,10 +29,20 @@ a:hover {
     color: black
 }
 
+a.no-underline {
+    text-decoration: none;
+}
+
 @media (min-width: 768px) {
     a.nav-link {
         padding-left: 0 !important;
         padding-right: 15px !important;
+    }
+}
+
+@media (min-width: 768px) {
+    .navbar-back-link {
+        display: none;
     }
 }
 
@@ -107,6 +119,23 @@ button.navbar-toggler {
     text-align: center;
 }
 
+@media (min-width: 600px) {
+    h5.card-title {
+        max-width: 600px;
+        text-align: center;
+        margin: auto;
+    }
+}
+
+.card-back {
+    h5.card-title {
+        max-width: unset;
+        text-align: left !important;
+        margin-left: 0 !important;
+        padding-bottom: 1rem;
+    }
+}
+
 .question-card {
     perspective: 1000px;
     transform-style: preserve-3d;
@@ -116,7 +145,6 @@ button.navbar-toggler {
     overflow-y: scroll !important;
     overflow-x: hidden !important;
     text-wrap: balance;
-    border-color: whitesmoke;
 }
 
 @media (min-width: 600px) {
@@ -125,17 +153,9 @@ button.navbar-toggler {
     }
 }
 
-
 .question-card.flipped {
     transform: rotateY(180deg);
 }
-
-// .question-card .card-front,
-// .question-card .card-back {
-//     position: absolute;
-//     top: 0;
-//     left: 0;
-// }
 
 @media (min-width: 600px) {
     .question-card .card-front {
@@ -152,13 +172,13 @@ button.navbar-toggler {
 }
 
 .show-answer-correctAnswer {
-    width: 75vw;
-    margin: auto;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
 }
 
-@media (min-width: 1200px) {
-    .show-answer-correctAnswer {
-       width: 800px
+@media (min-width: 900px) {
+    .question-explanation {
+        padding-left: 1vw;
     }
 }
 
@@ -170,14 +190,4 @@ button.navbar-toggler {
 
 .add-existing-category {
     cursor: pointer;
-}
-
-.question-explanation {
-    padding-left: 9vw;
-}
-
-@media (min-width: 900px) {
-    .question-explanation {
-        padding-left: 1vw;
-    }
 }

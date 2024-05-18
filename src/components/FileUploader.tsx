@@ -84,9 +84,19 @@ const FileUpload = () => {
                         return;
                     }
 
+                    const fileContent = reader.result as any;
+                    let jsonData = JSON.parse(fileContent);
+                    jsonData = jsonData.map((item: any) => {
+                        if (item.questionText) {
+                            item.questionText = item.questionText.replace(/↵/g, '\n\n');
+                        }
+                        if (item.explanation) {
+                            item.explanation = item.explanation.replace(/↵/g, '\n\n');
+                        }
+                        return item;
+                    });
+
                     if (name.includes('questions')) {
-                        const fileContent = reader.result as any;
-                        const jsonData = JSON.parse(fileContent);
                         const newQuestions = createQuestions(jsonData);
                         if (newQuestions) {
                             cardStore.clear();
@@ -102,8 +112,6 @@ const FileUpload = () => {
                     }
 
                     if (name.includes('cards')) {
-                        const fileContent = reader.result as any;
-                        const jsonData = JSON.parse(fileContent);
                         cardStore.clear();
                         await cardStore.replaceItems(jsonData);
                         setToastMessage({
